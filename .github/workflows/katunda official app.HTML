@@ -1,0 +1,5892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Katunda Secondary School - Advanced GCE E-Registration System v2.0</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/qrcode.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1a237e;
+  --primary-dark: #0d1452;
+  --primary-light: #303f9f;
+  --secondary: #ff6f00;
+  --secondary-dark: #e65100;
+  --accent: #00bcd4;
+  --accent-dark: #0097a7;
+  --success: #4CAF50;
+  --warning: #FF9800;
+  --danger: #F44336;
+  --info: #2196F3;
+  --light-bg: #f5f7fa;
+  --card-bg: #FFFFFF;
+  --text-dark: #2c3e50;
+  --text-light: #7f8c8d;
+  --border: #e0e6ed;
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.15);
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-light));
+  --gradient-secondary: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+  --gradient-accent: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  --gradient-success: linear-gradient(135deg, var(--success), #2E7D32);
+  --gradient-warning: linear-gradient(135deg, var(--warning), #EF6C00);
+  --gradient-info: linear-gradient(135deg, var(--info), #0d47a1);
+  --gradient-purple: linear-gradient(135deg, #9c27b0, #6a1b9a);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+  padding: 15px;
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text-dark);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+/* ==================== LOGIN SCREEN ==================== */
+.login-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  padding: 20px;
+}
+
+.login-container {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.login-header {
+  margin-bottom: 25px;
+}
+
+.login-header h1 {
+  color: var(--primary);
+  font-size: 28px;
+  margin-bottom: 10px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.login-header p {
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.login-form {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-dark);
+  font-size: 14px;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+}
+
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 10px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.login-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ==================== MAIN APPLICATION ==================== */
+.app-container {
+  display: none;
+  max-width: 100%;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.app-header {
+  background: white;
+  padding: 15px 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.app-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--gradient-primary);
+}
+
+.header-left h1 {
+  color: var(--primary);
+  font-size: 22px;
+  margin-bottom: 5px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.header-left p {
+  color: var(--text-light);
+  font-size: 12px;
+}
+
+.header-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.user-info {
+  background: var(--light-bg);
+  padding: 8px 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.user-info i {
+  color: var(--primary);
+  font-size: 18px;
+}
+
+.settings-btn, .logout-btn, .sync-btn {
+  background: var(--gradient-secondary);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.settings-btn {
+  background: var(--gradient-accent);
+}
+
+.sync-btn {
+  background: var(--gradient-info);
+}
+
+.settings-btn:hover, .logout-btn:hover, .sync-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 111, 0, 0.3);
+}
+
+/* Dashboard Stats */
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+}
+
+.stat-icon.primary { background: var(--gradient-primary); }
+.stat-icon.secondary { background: var(--gradient-secondary); }
+.stat-icon.success { background: var(--gradient-success); }
+.stat-icon.warning { background: var(--gradient-warning); }
+.stat-icon.info { background: var(--gradient-info); }
+.stat-icon.accent { background: var(--gradient-accent); }
+.stat-icon.purple { background: var(--gradient-purple); }
+
+.stat-content h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.stat-content p {
+  color: var(--text-light);
+  font-size: 12px;
+}
+
+/* Main Content */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    grid-template-columns: 1fr 320px;
+  }
+}
+
+/* Form Container */
+.form-container {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+.form-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--light-bg);
+}
+
+.form-section:last-child {
+  border-bottom: none;
+}
+
+.form-section h3 {
+  color: var(--primary);
+  font-size: 18px;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid var(--primary-light);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.input-group {
+  position: relative;
+}
+
+.input-group i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  font-size: 16px;
+}
+
+.input-group input, .input-group select, .input-group textarea {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s;
+  background: white;
+  font-family: 'Poppins', sans-serif;
+}
+
+.input-group textarea {
+  min-height: 80px;
+  resize: vertical;
+  padding-left: 40px;
+}
+
+.input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+}
+
+/* Documents Section */
+.documents-section {
+  background: var(--light-bg);
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.document-card {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.document-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.document-card.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.document-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.document-card.selected .document-icon {
+  color: white;
+}
+
+.document-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.status-submitted {
+  color: var(--success);
+}
+
+.status-not-submitted {
+  color: var(--danger);
+}
+
+/* Photo Upload */
+.photo-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  background: var(--light-bg);
+  border-radius: 10px;
+  border: 2px dashed var(--border);
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.photo-upload-section:hover {
+  border-color: var(--primary);
+  background: rgba(26, 35, 126, 0.05);
+}
+
+.photo-preview {
+  width: 120px;
+  height: 150px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 3px solid var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-light);
+}
+
+.photo-placeholder i {
+  font-size: 36px;
+  color: var(--primary);
+}
+
+.upload-btn {
+  padding: 8px 20px;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+/* Subjects Selection */
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  padding: 15px;
+  background: var(--light-bg);
+  border-radius: 12px;
+}
+
+.subject-card {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.subject-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.subject-card.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* Fees Display */
+.fees-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.fee-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 5px solid var(--accent);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.fee-card.total {
+  border-left-color: var(--success);
+  background: linear-gradient(135deg, #f0f9f0, #e8f5e9);
+}
+
+.fee-card label {
+  color: var(--text-light);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.fee-card input {
+  font-weight: 600;
+  color: var(--text-dark);
+  border: none;
+  background: transparent;
+  padding: 5px 0;
+  font-size: 16px;
+  width: 100%;
+}
+
+.fee-card.total input {
+  color: var(--success);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Payment Section */
+.payment-section {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  margin-top: 15px;
+}
+
+.payment-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.payment-status-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.status-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 5px solid var(--border);
+  transition: all 0.3s;
+}
+
+.status-card.paid {
+  border-left-color: var(--success);
+  background: #f0f9f0;
+}
+
+.status-card.partial {
+  border-left-color: var(--warning);
+  background: #fff9e6;
+}
+
+.status-card.unpaid {
+  border-left-color: var(--danger);
+  background: #fff0f0;
+}
+
+/* Sidebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.quick-actions {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.quick-actions h3 {
+  color: var(--primary);
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 12px 15px;
+  border: none;
+  border-radius: 8px;
+  background: var(--light-bg);
+  color: var(--text-dark);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.action-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateX(5px);
+}
+
+.action-btn i {
+  font-size: 16px;
+}
+
+/* Records Table */
+.records-section {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-top: 20px;
+}
+
+.records-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.records-table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1600px;
+}
+
+.records-table th {
+  background: var(--primary);
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-size: 13px;
+}
+
+.records-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.records-table tr:hover {
+  background: var(--light-bg);
+}
+
+.action-buttons-cell {
+  display: flex;
+  gap: 6px;
+}
+
+.view-btn, .edit-btn, .delete-btn, .receipt-btn, .print-btn, .pdf-btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s;
+}
+
+.view-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.edit-btn {
+  background: var(--accent);
+  color: white;
+}
+
+.delete-btn {
+  background: var(--danger);
+  color: white;
+}
+
+.receipt-btn {
+  background: var(--success);
+  color: white;
+}
+
+.print-btn {
+  background: var(--info);
+  color: white;
+}
+
+.pdf-btn {
+  background: var(--warning);
+  color: white;
+}
+
+.view-btn:hover, .edit-btn:hover, .delete-btn:hover, .receipt-btn:hover, .print-btn:hover, .pdf-btn:hover {
+  transform: scale(1.05);
+}
+
+.view-btn:hover { background: var(--primary-dark); }
+.edit-btn:hover { background: var(--accent-dark); }
+.delete-btn:hover { background: #d32f2f; }
+.receipt-btn:hover { background: #2E7D32; }
+.print-btn:hover { background: #0d47a1; }
+.pdf-btn:hover { background: #EF6C00; }
+
+/* Modals */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-header h3 {
+  color: var(--primary);
+  font-size: 18px;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text-light);
+}
+
+/* Loading */
+.loading-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.loading-spinner {
+  border: 5px solid rgba(26, 35, 126, 0.1);
+  border-top: 5px solid var(--primary);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  background: var(--success);
+  color: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  animation: slideIn 0.3s ease;
+  max-width: 350px;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Export Buttons */
+.export-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.export-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.export-btn.pdf {
+  background: var(--gradient-secondary);
+  color: white;
+}
+
+.export-btn.excel {
+  background: var(--gradient-success);
+  color: white;
+}
+
+.export-btn.report {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+/* Offline Indicator */
+.offline-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: var(--warning);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  z-index: 10001;
+  display: none;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Confirmation Dialog */
+.confirmation-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 10002;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.confirmation-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  text-align: center;
+}
+
+.confirmation-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* User Role Badges */
+.role-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.role-admin {
+  background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+  color: white;
+}
+
+.role-user {
+  background: linear-gradient(135deg, #2196F3, #0d47a1);
+  color: white;
+}
+
+/* QR Code Display */
+.qr-code-container {
+  padding: 15px;
+  background: white;
+  border-radius: 10px;
+  text-align: center;
+  margin: 15px 0;
+  border: 2px solid var(--border);
+}
+
+.qr-code {
+  margin: 10px auto;
+  padding: 10px;
+  background: white;
+  display: inline-block;
+}
+
+/* SMS Panel */
+.sms-panel {
+  background: #e3f2fd;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 15px 0;
+  border-left: 4px solid var(--info);
+}
+
+/* WhatsApp Panel */
+.whatsapp-panel {
+  background: #25D366;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 15px 0;
+  border-left: 4px solid #128C7E;
+  color: white;
+}
+
+.whatsapp-panel h4 {
+  color: white;
+}
+
+/* Notification Center */
+.notification-center {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  display: none;
+}
+
+/* Receipt Styles */
+.receipt-container {
+  background: white;
+  padding: 20px;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 15px;
+}
+
+.receipt-header h2 {
+  color: var(--primary);
+  margin-bottom: 5px;
+}
+
+.receipt-details {
+  margin: 20px 0;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px dotted #eee;
+}
+
+.receipt-total {
+  border-top: 2px solid var(--primary);
+  padding-top: 15px;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.receipt-footer {
+  text-align: center;
+  margin-top: 30px;
+  color: var(--text-light);
+  font-size: 12px;
+}
+
+/* PDF Confirmation Form Styles */
+.pdf-confirmation {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.pdf-header {
+  text-align: center;
+  margin-bottom: 30px;
+  border-bottom: 3px solid #1a237e;
+  padding-bottom: 20px;
+}
+
+.pdf-header h1 {
+  color: #1a237e;
+  margin-bottom: 5px;
+  font-size: 24px;
+}
+
+.pdf-header h2 {
+  color: #ff6f00;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.candidate-photo-section {
+  float: right;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.candidate-photo {
+  width: 120px;
+  height: 150px;
+  border: 3px solid #1a237e;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.photo-placeholder-pdf {
+  width: 120px;
+  height: 150px;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+  padding: 10px;
+}
+
+.section-title {
+  background: #1a237e;
+  color: white;
+  padding: 8px 15px;
+  margin: 20px 0 10px 0;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.info-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.info-table tr:last-child td {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: bold;
+  color: #333;
+  width: 40%;
+}
+
+.signature-section {
+  margin-top: 50px;
+  border-top: 2px solid #1a237e;
+  padding-top: 20px;
+}
+
+.signature-line {
+  width: 300px;
+  border-bottom: 1px solid #333;
+  margin: 20px 0 5px 0;
+}
+
+.footer-note {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 12px;
+  color: #666;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+/* Batch Operations */
+.batch-operations {
+  background: #fff3e0;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 15px 0;
+  border-left: 4px solid #ff9800;
+}
+
+.batch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Accessibility */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  .app-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .header-right {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .records-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .modal-content {
+    margin: 10px;
+    padding: 15px;
+  }
+  
+  .action-buttons-cell {
+    flex-direction: column;
+    gap: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    padding: 15px;
+  }
+  
+  .payment-inputs {
+    grid-template-columns: 1fr;
+  }
+  
+  .payment-status-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .subjects-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .fees-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-paid {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge-partial {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.badge-unpaid {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* Batch Select */
+.batch-select {
+  margin: 10px 0;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 5px;
+}
+
+/* Database Status */
+.db-status {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background: #4caf50;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  z-index: 1000;
+}
+
+/* Audit Log Styles */
+.audit-log {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.audit-entry {
+  padding: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 12px;
+}
+
+.audit-entry:last-child {
+  border-bottom: none;
+}
+</style>
+</head>
+
+<body>
+<!-- Offline Indicator -->
+<div class="offline-indicator" id="offlineIndicator">
+  <i class="fas fa-wifi-slash"></i> Working Offline
+</div>
+
+<!-- Database Status Indicator -->
+<div class="db-status" id="dbStatus">
+  <i class="fas fa-database"></i> Local Storage
+</div>
+
+<!-- Confirmation Dialog -->
+<div class="confirmation-dialog" id="confirmationDialog">
+  <div class="confirmation-box">
+    <h3 id="confirmationTitle">Confirm Action</h3>
+    <p id="confirmationMessage">Are you sure you want to proceed?</p>
+    <div class="confirmation-buttons">
+      <button class="login-btn" id="confirmYes" style="background: var(--success);">Yes</button>
+      <button class="login-btn" id="confirmNo" style="background: var(--danger);">No</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-container">
+    <div class="login-header">
+      <h1><i class="fas fa-graduation-cap"></i> Katunda Secondary</h1>
+      <p>Advanced GCE E-Registration System v2.0 - Luampa District</p>
+    </div>
+    
+    <div class="login-form" id="loginForm">
+      <div class="form-group">
+        <label for="username"><i class="fas fa-user"></i> Username</label>
+        <input type="text" id="username" placeholder="Enter your username" value="admin">
+      </div>
+      
+      <div class="form-group">
+        <label for="password"><i class="fas fa-lock"></i> Password</label>
+        <input type="password" id="password" placeholder="Enter your password" value="admin123">
+      </div>
+      
+      <div class="form-group">
+        <label for="loginRole"><i class="fas fa-user-tag"></i> Role</label>
+        <select id="loginRole">
+          <option value="admin">Administrator</option>
+          <option value="user">Registration Officer</option>
+        </select>
+      </div>
+      
+      <button class="login-btn" onclick="login()">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MAIN APPLICATION ==================== -->
+<div id="appContainer" class="app-container">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <h1><i class="fas fa-school"></i> Katunda Secondary School</h1>
+      <p>GCE E-Registration System 2025-2026 - Luampa District</p>
+    </div>
+    <div class="header-right">
+      <div class="user-info">
+        <i class="fas fa-user-circle"></i>
+        <span id="currentUser">Administrator</span>
+        <span class="role-badge role-admin" id="userRoleBadge">ADMIN</span>
+      </div>
+      <button class="sync-btn" onclick="syncData()" title="Sync Data">
+        <i class="fas fa-sync-alt"></i> Sync
+      </button>
+      <button class="settings-btn" onclick="showSettings()">
+        <i class="fas fa-cog"></i> Settings
+      </button>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Dashboard Stats -->
+  <div class="dashboard-stats">
+    <div class="stat-card">
+      <div class="stat-icon primary">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-content">
+        <h3 id="totalRegistrations">0</h3>
+        <p>Total Registrations</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon accent">
+        <i class="fas fa-school"></i>
+      </div>
+      <div class="stat-content">
+        <h3 id="schoolFeesCollected">K0</h3>
+        <p>School Fees Collected</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon info">
+        <i class="fas fa-university"></i>
+      </div>
+      <div class="stat-content">
+        <h3 id="eczFeesCollected">K0</h3>
+        <p>ECZ Fees Collected</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon purple">
+        <i class="fas fa-file-invoice"></i>
+      </div>
+      <div class="stat-content">
+        <h3 id="formFeesCollected">K0</h3>
+        <p>Form Fees Collected</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon secondary">
+        <i class="fas fa-money-bill-wave"></i>
+      </div>
+      <div class="stat-content">
+        <h3 id="totalFees">K0</h3>
+        <p>Total Fees Collected</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon success">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="stat-content">
+        <h3 id="completedPayments">0</h3>
+        <p>Fully Paid</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon warning">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-content">
+        <h3 id="partialPayments">0</h3>
+        <p>Partial Payments</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon primary">
+        <i class="fas fa-question-circle"></i>
+      </div>
+      <div class="stat-content">
+        <h3 id="pendingRegistrations">0</h3>
+        <p>Pending/Queries</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Operations -->
+  <div class="batch-operations" id="batchOperations" style="display: none;">
+    <h3><i class="fas fa-tasks"></i> Batch Operations</h3>
+    <div class="batch-grid">
+      <button class="action-btn" onclick="selectAllRecords()">
+        <i class="fas fa-check-square"></i> Select All
+      </button>
+      <button class="action-btn" onclick="deselectAllRecords()">
+        <i class="fas fa-square"></i> Deselect All
+      </button>
+      <select id="batchAction" class="input-group" style="padding: 10px;">
+        <option value="">Choose Action...</option>
+        <option value="export">Export Selected</option>
+        <option value="update_status">Update Status</option>
+        <option value="generate_receipts">Generate Receipts</option>
+        <option value="generate_confirmations">Generate Confirmations</option>
+      </select>
+      <button class="login-btn" onclick="executeBatchAction()" style="background: var(--gradient-info);">
+        <i class="fas fa-play"></i> Execute
+      </button>
+    </div>
+    <p id="selectedCount" style="margin-top: 10px; font-size: 12px; color: var(--text-light);">0 records selected</p>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Form Section -->
+    <div class="form-container">
+      <!-- Photo Upload -->
+      <div class="form-section">
+        <h3><i class="fas fa-camera"></i> Passport Size Photo</h3>
+        <div class="photo-upload-section" onclick="document.getElementById('photoUpload').click()">
+          <div class="photo-preview" id="photoPreview">
+            <div class="photo-placeholder">
+              <i class="fas fa-user-circle"></i>
+              <span>Click to upload photo</span>
+              <span>Passport size (3.5 x 4.5 cm)</span>
+            </div>
+          </div>
+          <button class="upload-btn">
+            <i class="fas fa-upload"></i> Upload Photo
+          </button>
+          <input type="file" id="photoUpload" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)">
+          <div class="photo-requirements">
+            <p><i class="fas fa-info-circle"></i> Max size: 2MB | Format: JPG, PNG</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Document Submission Section -->
+      <div class="form-section">
+        <h3><i class="fas fa-file-upload"></i> Document Submission</h3>
+        <p style="color: var(--text-light); margin-bottom: 10px; font-size: 13px;">
+          Tick the documents that have been submitted by the candidate:
+        </p>
+        <div class="documents-grid">
+          <div class="document-card" onclick="toggleDocument('nrcCopy')">
+            <i class="fas fa-id-card document-icon"></i>
+            <div>NRC Copy</div>
+            <div class="document-status">
+              <span id="nrcStatusText">Not Submitted</span>
+              <i class="fas fa-times status-not-submitted" id="nrcStatusIcon"></i>
+            </div>
+            <input type="checkbox" id="nrcCopy" style="display: none;">
+          </div>
+          
+          <div class="document-card" onclick="toggleDocument('depositSlip')">
+            <i class="fas fa-receipt document-icon"></i>
+            <div>Deposit Slip</div>
+            <div class="document-status">
+              <span id="depositStatusText">Not Submitted</span>
+              <i class="fas fa-times status-not-submitted" id="depositStatusIcon"></i>
+            </div>
+            <input type="checkbox" id="depositSlip" style="display: none;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Candidate Details -->
+      <div class="form-section">
+        <h3><i class="fas fa-user-graduate"></i> Candidate Details</h3>
+        <div class="grid">
+          <div class="input-group">
+            <i class="fas fa-user-tag"></i>
+            <select id="title" required>
+              <option value="">Title</option>
+              <option value="MR">Mr.</option>
+              <option value="MRS">Mrs.</option>
+              <option value="MISS">Miss</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="othernames" class="visually-hidden">Other Names</label>
+            <i class="fas fa-signature"></i>
+            <input type="text" id="othernames" placeholder="Other Names" required aria-describedby="othernamesHelp">
+            <div id="othernamesHelp" class="visually-hidden">Enter candidate's other names</div>
+          </div>
+          <div class="input-group">
+            <label for="surname" class="visually-hidden">Surname</label>
+            <i class="fas fa-user"></i>
+            <input type="text" id="surname" placeholder="Surname" required>
+          </div>
+          
+          <div class="input-group">
+            <label for="nrc" class="visually-hidden">National Registration Card Number</label>
+            <i class="fas fa-id-card"></i>
+            <input type="text" id="nrc" class="nrc-input" placeholder="Enter NRC (e.g., 122332/22/2)" required 
+                   maxlength="11" oninput="formatNRC(this)" aria-describedby="nrcHelp">
+            <div id="nrcHelp" class="visually-hidden">Format: 6 digits, forward slash, 2 digits, forward slash, 1 digit</div>
+            <div class="nrc-helper">Format: 222222/22/1</div>
+          </div>
+          
+          <div class="input-group">
+            <i class="fas fa-venus-mars"></i>
+            <select id="gender" required>
+              <option value="">Gender</option>
+              <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label for="dob" class="visually-hidden">Date of Birth</label>
+            <i class="fas fa-calendar"></i>
+            <input type="text" id="dob" class="dob-input" placeholder="DD/MM/YYYY (e.g., 12/12/1996)" required 
+                   maxlength="10" oninput="formatDOB(this)">
+            <span class="dob-helper">Format: DD/MM/YYYY</span>
+          </div>
+          
+          <div class="input-group">
+            <label for="contact" class="visually-hidden">Contact Number</label>
+            <i class="fas fa-phone"></i>
+            <input type="tel" id="contact" placeholder="Contact Number (10 digits)" required 
+                   maxlength="10" oninput="formatPhone(this)">
+          </div>
+          <div class="input-group">
+            <label for="email" class="visually-hidden">Email Address</label>
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" placeholder="Email Address (Optional)">
+          </div>
+          <div class="input-group">
+            <i class="fas fa-map-marker-alt"></i>
+            <select id="province" required onchange="updateDistricts()">
+              <option value="">Select Province</option>
+              <option value="WESTERN">Western Province</option>
+              <option value="LUAPULA">Luapula Province</option>
+              <option value="NORTHERN">Northern Province</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <i class="fas fa-map-pin"></i>
+            <select id="district" required>
+              <option value="">Select District</option>
+              <option value="LUAMPA">Luampa</option>
+              <option value="KAOMA">Kaoma</option>
+              <option value="MONGU">Mongu</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="residentialAddress" class="visually-hidden">Residential Address</label>
+            <i class="fas fa-home"></i>
+            <input type="text" id="residentialAddress" placeholder="Residential Address" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guardian Details -->
+      <div class="form-section">
+        <h3><i class="fas fa-users"></i> Parent/Guardian Details</h3>
+        <div class="grid">
+          <div class="input-group">
+            <i class="fas fa-user-friends"></i>
+            <select id="relationship" required>
+              <option value="">Relationship</option>
+              <option value="FATHER">Father</option>
+              <option value="MOTHER">Mother</option>
+              <option value="GUARDIAN">Guardian</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="guardianName" class="visually-hidden">Guardian Full Name</label>
+            <i class="fas fa-user"></i>
+            <input type="text" id="guardianName" placeholder="Guardian Full Name" required>
+          </div>
+          
+          <div class="input-group">
+            <label for="guardianNRC" class="visually-hidden">Guardian NRC</label>
+            <i class="fas fa-id-card"></i>
+            <input type="text" id="guardianNRC" class="nrc-input" placeholder="Guardian NRC (Optional)" 
+                   maxlength="11" oninput="formatNRC(this)">
+          </div>
+          
+          <div class="input-group">
+            <label for="guardianContact" class="visually-hidden">Guardian Contact</label>
+            <i class="fas fa-phone"></i>
+            <input type="tel" id="guardianContact" placeholder="Guardian Contact (10 digits)" required 
+                   maxlength="10" oninput="formatPhone(this)">
+          </div>
+          <div class="input-group" style="grid-column: 1/-1;">
+            <label for="guardianAddress" class="visually-hidden">Guardian Residential Address</label>
+            <i class="fas fa-map-marker-alt"></i>
+            <input type="text" id="guardianAddress" placeholder="Guardian Residential Address" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subjects Selection -->
+      <div class="form-section">
+        <h3><i class="fas fa-book-open"></i> Subjects Selection</h3>
+        <div class="subjects-grid" id="subjectsGrid">
+          <!-- Subjects loaded by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Fee Calculation -->
+      <div class="form-section">
+        <h3><i class="fas fa-calculator"></i> Fee Calculation</h3>
+        <div class="fees-grid">
+          <div class="fee-card">
+            <label>Number of Subjects</label>
+            <input type="text" id="numSubjects" readonly>
+          </div>
+          <div class="fee-card">
+            <label>ECZ Examination Fee</label>
+            <input type="text" id="eczFee" readonly>
+          </div>
+          <div class="fee-card">
+            <label>Tuition Fee</label>
+            <input type="text" id="tuitionFee" readonly>
+          </div>
+          <div class="fee-card">
+            <label>Practical Fee</label>
+            <input type="text" id="practicalFee" readonly>
+          </div>
+          <div class="fee-card">
+            <label>Centre Fee</label>
+            <input type="text" id="centreFee" value="K200" readonly>
+          </div>
+          <div class="fee-card total">
+            <label>Total School Fee</label>
+            <input type="text" id="totalSchool" readonly>
+          </div>
+          <div class="fee-card total">
+            <label>Total ECZ Fee</label>
+            <input type="text" id="totalEcz" readonly>
+          </div>
+          <div class="fee-card total" style="background: linear-gradient(135deg, #ff6f00, #ff5722);">
+            <label style="color: white;">Grand Total</label>
+            <input type="text" id="grandTotal" readonly style="color: white;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Section -->
+      <div class="payment-section">
+        <h3 style="margin-bottom: 15px;"><i class="fas fa-credit-card"></i> Payment Details</h3>
+        
+        <div class="payment-inputs">
+          <div class="input-group">
+            <i class="fas fa-file-invoice"></i>
+            <select id="formFeeStatus" onchange="updatePaymentStatus()">
+              <option value="unpaid">Form Fee (K50) - Not Paid</option>
+              <option value="paid">Form Fee (K50) - Paid</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <i class="fas fa-school"></i>
+            <input type="number" id="schoolPayment" placeholder="Amount paid to school" min="0" oninput="updatePaymentStatus()">
+          </div>
+          <div class="input-group">
+            <i class="fas fa-university"></i>
+            <input type="number" id="eczPayment" placeholder="Amount paid to ECZ" min="0" oninput="updatePaymentStatus()">
+          </div>
+          <div class="input-group">
+            <i class="fas fa-sticky-note"></i>
+            <input type="text" id="paymentReference" placeholder="Payment Reference Number">
+          </div>
+        </div>
+
+        <div class="payment-status-cards" id="paymentStatusCards">
+          <!-- Status cards updated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="export-buttons">
+        <button class="login-btn" onclick="validateAndCalculate()" style="background: var(--gradient-accent);">
+          <i class="fas fa-calculator"></i> Calculate Fees
+        </button>
+        <button class="login-btn" onclick="submitRegistration()" id="submitButton">
+          <i class="fas fa-paper-plane"></i> Submit Registration
+        </button>
+        <button class="export-btn pdf" onclick="generatePDF()" aria-label="Generate PDF form">
+          <i class="fas fa-file-pdf"></i> Generate PDF Form
+        </button>
+        <button class="export-btn report" onclick="generateDetailedFinancialReport()">
+          <i class="fas fa-chart-bar"></i> Financial Report
+        </button>
+        <button class="export-btn" onclick="generateReceipt()" style="background: var(--gradient-success);">
+          <i class="fas fa-receipt"></i> Generate Receipt
+        </button>
+        <button class="export-btn" onclick="exportAllData()" style="background: var(--gradient-purple);">
+          <i class="fas fa-download"></i> Backup Data
+        </button>
+      </div>
+      
+      <!-- Receipt Display Area -->
+      <div id="receiptDisplay" class="qr-code-container" style="display: none;">
+        <h4><i class="fas fa-receipt"></i> Payment Receipt</h4>
+        <div id="receiptContent"></div>
+        <button class="action-btn" onclick="printReceipt()" style="margin-top: 10px;">
+          <i class="fas fa-print"></i> Print Receipt
+        </button>
+        <button class="action-btn" onclick="downloadReceiptPDF()" style="margin-top: 10px; background: var(--gradient-secondary); color: white;">
+          <i class="fas fa-file-pdf"></i> Download Receipt PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="quick-actions">
+        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+        <div class="action-buttons">
+          <button class="action-btn" onclick="clearForm()" aria-label="Clear form and reset all fields">
+            <i class="fas fa-broom"></i> Clear Form
+          </button>
+          <button class="action-btn" onclick="showAllRecords()">
+            <i class="fas fa-list"></i> View All Records
+          </button>
+          <button class="action-btn" onclick="showPendingPayments()">
+            <i class="fas fa-clock"></i> Pending Payments
+          </button>
+          <button class="action-btn" onclick="showCompletedRegistrations()">
+            <i class="fas fa-check-circle"></i> Fully Paid
+          </button>
+          <button class="action-btn" onclick="showBankDetails()">
+            <i class="fas fa-university"></i> Bank Details
+          </button>
+          <button class="action-btn" onclick="exportToExcel()">
+            <i class="fas fa-file-excel"></i> Export All Records
+          </button>
+          <button class="action-btn" onclick="exportToCSV()">
+            <i class="fas fa-file-csv"></i> Export as CSV
+          </button>
+          <button class="action-btn" onclick="showSMSNotifications()" id="smsButton" style="display: none;">
+            <i class="fas fa-sms"></i> SMS Notifications
+          </button>
+          <button class="action-btn" onclick="showWhatsAppMessages()" id="whatsappButton" style="display: none;">
+            <i class="fab fa-whatsapp"></i> WhatsApp Messages
+          </button>
+          <button class="action-btn" onclick="showAuditLogs()">
+            <i class="fas fa-clipboard-list"></i> Audit Logs
+          </button>
+          <button class="action-btn" onclick="toggleBatchOperations()">
+            <i class="fas fa-tasks"></i> Batch Operations
+          </button>
+        </div>
+      </div>
+      
+      <div class="quick-actions">
+        <h3><i class="fas fa-chart-line"></i> Quick Stats</h3>
+        <div style="padding: 10px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+            <span>Today's Registrations:</span>
+            <strong id="todayRegistrations">0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+            <span>Monthly Total:</span>
+            <strong id="monthlyTotal">K0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+            <span>Balance Due:</span>
+            <strong id="balanceDue">K0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+            <span>Districts Count:</span>
+            <strong id="districtCount">0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+            <span>Storage Used:</span>
+            <strong id="storageUsed">0 KB</strong>
+          </div>
+        </div>
+      </div>
+      
+      <div class="quick-actions">
+        <h3><i class="fas fa-download"></i> Export Options</h3>
+        <div class="export-buttons">
+          <button class="export-btn excel" onclick="exportFinancialSummary()">
+            <i class="fas fa-file-excel"></i> Export Summary
+          </button>
+          <button class="export-btn report" onclick="generateReportPDF()">
+            <i class="fas fa-file-pdf"></i> Full Report PDF
+          </button>
+          <button class="export-btn" onclick="generateRecordsPDF()" style="background: var(--gradient-warning);">
+            <i class="fas fa-file-pdf"></i> Records PDF
+          </button>
+          <button class="export-btn" onclick="importDataPrompt()" style="background: var(--gradient-accent);">
+            <i class="fas fa-upload"></i> Import Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Records Section -->
+  <div class="records-section">
+    <div class="records-header">
+      <h3><i class="fas fa-history"></i> Registration Records</h3>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this.files[0])">
+        <select id="filterStatus" onchange="filterRecords()" style="padding: 8px 12px; border-radius: 6px; border: 2px solid var(--border); font-size: 13px;">
+          <option value="all">All Status</option>
+          <option value="Fully Paid">Fully Paid</option>
+          <option value="Partial">Partial Payment</option>
+          <option value="Partial School">Partial School</option>
+          <option value="Partial ECZ">Partial ECZ</option>
+          <option value="Partial Form">Partial Form</option>
+          <option value="Pending">Pending</option>
+          <option value="Query">Query</option>
+        </select>
+        <input type="text" id="searchRecord" placeholder="Search by name or NRC..." style="padding: 8px 12px; border-radius: 6px; border: 2px solid var(--border); font-size: 13px;" onkeyup="debouncedSearch()">
+        <button class="action-btn" onclick="exportToExcel()" style="background: var(--success); color: white; border: none;">
+          <i class="fas fa-file-excel"></i> Export All
+        </button>
+        <button class="action-btn" onclick="generateRecordsPDF()" style="background: var(--danger); color: white; border: none;">
+          <i class="fas fa-file-pdf"></i> Export PDF
+        </button>
+        <button class="action-btn" onclick="document.getElementById('importFile').click()" style="background: var(--accent); color: white; border: none;">
+          <i class="fas fa-upload"></i> Import
+        </button>
+      </div>
+    </div>
+    
+    <div class="records-table-container">
+      <table class="records-table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"></th>
+            <th>#</th>
+            <th>Photo</th>
+            <th>Student Name</th>
+            <th>NRC</th>
+            <th>Documents</th>
+            <th>DOB</th>
+            <th>District</th>
+            <th>Subjects</th>
+            <th>School Fee</th>
+            <th>ECZ Fee</th>
+            <th>Form Fee</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="recordsTableBody">
+          <!-- Records loaded by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+<!-- View Record Modal -->
+<div id="viewModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-eye"></i> Registration Details</h3>
+      <button class="close-modal" onclick="closeViewModal()">&times;</button>
+    </div>
+    <div id="viewModalContent">
+      <!-- Content loaded here -->
+    </div>
+  </div>
+</div>
+
+<!-- Financial Report Modal -->
+<div id="financialModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-file-invoice-dollar"></i> Financial Summary Report</h3>
+      <button class="close-modal" onclick="closeFinancialModal()">&times;</button>
+    </div>
+    <div id="financialModalContent" style="padding: 15px;">
+      <!-- Content loaded here -->
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div id="settingsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-cog"></i> System Settings</h3>
+      <button class="close-modal" onclick="closeSettingsModal()">&times;</button>
+    </div>
+    <div style="padding: 15px;">
+      <div class="settings-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        <div class="settings-card">
+          <h4><i class="fas fa-user-shield"></i> Account Settings</h4>
+          <div class="form-group">
+            <label for="modalUsername">Username</label>
+            <input type="text" id="modalUsername">
+          </div>
+          <div class="form-group">
+            <label for="modalPassword">New Password</label>
+            <input type="password" id="modalPassword" placeholder="Enter new password">
+          </div>
+          <div class="form-group">
+            <label for="modalConfirmPassword">Confirm Password</label>
+            <input type="password" id="modalConfirmPassword" placeholder="Confirm new password">
+          </div>
+        </div>
+        
+        <div class="settings-card">
+          <h4><i class="fas fa-money-bill-wave"></i> Fee Settings</h4>
+          <div class="form-group">
+            <label for="modalSubjectFee">Subject Fee (K)</label>
+            <input type="number" id="modalSubjectFee" value="200">
+          </div>
+          <div class="form-group">
+            <label for="modalPracticalFee">Practical Fee (K)</label>
+            <input type="number" id="modalPracticalFee" value="100">
+          </div>
+          <div class="form-group">
+            <label for="modalCentreFee">Centre Fee (K)</label>
+            <input type="number" id="modalCentreFee" value="200">
+          </div>
+          <div class="form-group">
+            <label for="modalFormFee">Form Fee (K)</label>
+            <input type="number" id="modalFormFee" value="50">
+          </div>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+        <button class="login-btn" onclick="saveSystemSettings()" style="flex: 1;">
+          <i class="fas fa-save"></i> Save Settings
+        </button>
+        <button class="login-btn" onclick="resetToDefaults()" style="flex: 1; background: var(--warning);">
+          <i class="fas fa-undo"></i> Reset Defaults
+        </button>
+        <button class="login-btn" onclick="clearAllData()" style="flex: 1; background: var(--danger);">
+          <i class="fas fa-trash"></i> Clear All Data
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SMS Notifications Modal -->
+<div id="smsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-sms"></i> SMS Notifications</h3>
+      <button class="close-modal" onclick="closeSMSModal()">&times;</button>
+    </div>
+    <div style="padding: 15px;">
+      <div class="sms-panel">
+        <h4><i class="fas fa-cogs"></i> SMS Configuration</h4>
+        <div class="grid">
+          <div class="input-group">
+            <i class="fas fa-key"></i>
+            <input type="text" id="smsApiKey" placeholder="SMS Gateway API Key">
+          </div>
+          <div class="input-group">
+            <i class="fas fa-phone"></i>
+            <input type="text" id="smsSenderNumber" placeholder="Sender Number">
+          </div>
+        </div>
+      </div>
+      
+      <div class="sms-panel">
+        <h4><i class="fas fa-paper-plane"></i> Send SMS Notification</h4>
+        <div class="grid">
+          <div class="input-group">
+            <i class="fas fa-users"></i>
+            <select id="smsRecipientType">
+              <option value="single">Single Candidate</option>
+              <option value="pending">All Pending Payments</option>
+              <option value="partial">All Partial Payments</option>
+              <option value="fully_paid">All Fully Paid</option>
+              <option value="all">All Candidates</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <i class="fas fa-phone"></i>
+            <input type="text" id="smsPhoneNumber" placeholder="Phone Number (e.g., 260961234567)">
+          </div>
+          <div class="input-group" style="grid-column: 1/-1;">
+            <i class="fas fa-comment-alt"></i>
+            <select id="smsTemplate">
+              <option value="custom">Custom Message</option>
+              <option value="payment_reminder">Payment Reminder</option>
+              <option value="registration_confirmation">Registration Confirmation</option>
+              <option value="payment_thanks">Thank You for Payment</option>
+              <option value="document_reminder">Document Submission Reminder</option>
+            </select>
+          </div>
+          <div class="input-group" style="grid-column: 1/-1;">
+            <i class="fas fa-envelope"></i>
+            <textarea id="smsMessage" placeholder="Type your message here..." rows="4"></textarea>
+          </div>
+        </div>
+        <button class="login-btn" onclick="sendSMSNotification()" style="margin-top: 10px; background: var(--gradient-success);">
+          <i class="fas fa-paper-plane"></i> Send SMS
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp Messages Modal -->
+<div id="whatsappModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fab fa-whatsapp"></i> WhatsApp Messages</h3>
+      <button class="close-modal" onclick="closeWhatsAppModal()">&times;</button>
+    </div>
+    <div style="padding: 15px;">
+      <div class="whatsapp-panel">
+        <h4><i class="fas fa-paper-plane"></i> Send WhatsApp Message</h4>
+        <div class="grid">
+          <div class="input-group">
+            <i class="fas fa-users"></i>
+            <select id="whatsappRecipientType">
+              <option value="single">Single Candidate</option>
+              <option value="pending">All Pending Payments</option>
+              <option value="partial">All Partial Payments</option>
+              <option value="fully_paid">All Fully Paid</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <i class="fas fa-phone"></i>
+            <input type="text" id="whatsappPhoneNumber" placeholder="WhatsApp Number (e.g., 260961234567)">
+          </div>
+          <div class="input-group" style="grid-column: 1/-1;">
+            <i class="fas fa-comment-alt"></i>
+            <select id="whatsappTemplate">
+              <option value="custom">Custom Message</option>
+              <option value="payment_reminder">Payment Reminder</option>
+              <option value="registration_confirmation">Registration Confirmation</option>
+              <option value="payment_thanks">Thank You for Payment</option>
+              <option value="exam_schedule">Exam Schedule Reminder</option>
+            </select>
+          </div>
+          <div class="input-group" style="grid-column: 1/-1;">
+            <i class="fas fa-envelope"></i>
+            <textarea id="whatsappMessage" placeholder="Type your WhatsApp message here..." rows="4"></textarea>
+          </div>
+        </div>
+        <button class="login-btn" onclick="sendWhatsAppMessage()" style="margin-top: 10px; background: #25D366; color: white;">
+          <i class="fab fa-whatsapp"></i> Send WhatsApp Message
+        </button>
+      </div>
+      
+      <div class="sms-panel">
+        <h4><i class="fas fa-history"></i> WhatsApp Template Examples</h4>
+        <div style="font-size: 12px;">
+          <p><strong>Payment Reminder:</strong> Dear {name}, this is a reminder that your GCE registration payment is pending. Please complete payment at your earliest convenience. - Katunda Secondary School</p>
+          <p><strong>Thank You for Payment:</strong> Dear {name}, thank you for completing your GCE registration payment. Your registration is now confirmed. - Katunda Secondary School</p>
+          <p><strong>Registration Confirmation:</strong> Dear {name}, your GCE registration has been received and is being processed. - Katunda Secondary School</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bank Details Modal -->
+<div id="bankModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-university"></i> Bank Payment Details</h3>
+      <button class="close-modal" onclick="closeBankModal()">&times;</button>
+    </div>
+    <div style="padding: 15px;">
+      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h4 style="color: var(--primary); margin-bottom: 12px;">For School Fees Payment</h4>
+        <div style="display: grid; gap: 8px;">
+          <div><strong>Bank:</strong> ACCESS BANK</div>
+          <div><strong>Account Name:</strong> KATUNDA SECONDARY SCHOOL</div>
+          <div><strong>Account Number:</strong> <span style="color: var(--primary); font-weight: bold;">0300510783006</span></div>
+          <div><strong>Branch:</strong> KAOMA BRANCH</div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 15px; padding: 12px; background: #fff3e0; border-radius: 6px; border-left: 4px solid #ff9800;">
+        <p style="margin: 0; color: #e65100; font-size: 13px;">
+          <i class="fas fa-exclamation-circle"></i>
+          <strong>Important:</strong> Always use your NRC Number as payment reference. Save deposit slips for verification.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Logs Modal -->
+<div id="auditModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-clipboard-list"></i> System Audit Logs</h3>
+      <button class="close-modal" onclick="closeAuditModal()">&times;</button>
+    </div>
+    <div style="padding: 15px;">
+      <div class="audit-log" id="auditLogContent">
+        <!-- Audit logs loaded here -->
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button class="login-btn" onclick="exportAuditLogs()" style="flex: 1;">
+          <i class="fas fa-download"></i> Export Logs
+        </button>
+        <button class="login-btn" onclick="clearAuditLogs()" style="flex: 1; background: var(--danger);">
+          <i class="fas fa-trash"></i> Clear Logs
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <p style="font-size: 16px; color: var(--primary); font-weight: 600;" id="loadingText">Processing...</p>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMessage">Operation completed successfully!</span>
+</div>
+
+<script>
+// ==================== GLOBAL VARIABLES ====================
+let records = JSON.parse(localStorage.getItem('gceRecords')) || [];
+let users = JSON.parse(localStorage.getItem('gceUsers')) || [
+  {
+    id: 1,
+    username: 'admin',
+    password: CryptoJS.MD5('admin123').toString(),
+    name: 'System Administrator',
+    role: 'admin',
+    permissions: {
+      view: true,
+      create: true,
+      edit: true,
+      delete: true,
+      export: true,
+      settings: true,
+      sms: true,
+      whatsapp: true
+    },
+    created: Date.now(),
+    lastLogin: null,
+    status: 'active'
+  },
+  {
+    id: 2,
+    username: 'user',
+    password: CryptoJS.MD5('user123').toString(),
+    name: 'Registration Officer',
+    role: 'user',
+    permissions: {
+      view: true,
+      create: true,
+      edit: false,  // User cannot edit
+      delete: false, // User cannot delete
+      export: true,
+      settings: false,
+      sms: false,
+      whatsapp: false
+    },
+    created: Date.now(),
+    lastLogin: null,
+    status: 'active'
+  }
+];
+let currentUser = null;
+let currentPhoto = null;
+let settings = JSON.parse(localStorage.getItem('gceSettings')) || {
+  subjectFee: 200,
+  practicalFee: 100,
+  centreFee: 200,
+  formFee: 50
+};
+let auditLogs = JSON.parse(localStorage.getItem('auditLogs')) || [];
+let selectedRecords = new Set();
+let idleTimer;
+
+// Subjects data
+const subjects = [
+  { id: 'eng', name: 'English Language', practical: false },
+  { id: 'math', name: 'Mathematics', practical: false },
+  { id: 'civics', name: 'Civic Education', practical: false },
+  { id: 'agri', name: 'Agricultural Science', practical: true },
+  { id: 'comp', name: 'Computer Studies', practical: true },
+  { id: 'geo', name: 'Geography', practical: true },
+  { id: 'bio', name: 'Biology', practical: true },
+  { id: 'sci', name: 'Science', practical: true },
+  { id: 'rel2044', name: 'Religious Education 2044', practical: false },
+  { id: 'rel2046', name: 'Religious Education 2046', practical: false },
+  { id: 'commerce', name: 'Commerce', practical: false },
+  { id: 'accounts', name: 'Principles of Accounts', practical: false },
+  { id: 'history', name: 'History', practical: false },
+  { id: 'silozi', name: 'Silozi', practical: false }
+];
+
+// ==================== ENHANCED SECURITY FUNCTIONS ====================
+function hashPassword(password) {
+  return CryptoJS.MD5(password).toString();
+}
+
+// MODIFIED: Simplified NRC validation - only checks format, not Zambian validation
+function validateZambianNRC(nrc) {
+  const pattern = /^(\d{6})\/(\d{2})\/(\d{1})$/;
+  return pattern.test(nrc);
+}
+
+// ==================== AUDIT LOGGING ====================
+function logAudit(action, details) {
+  const log = {
+    id: Date.now(),
+    timestamp: new Date().toISOString(),
+    userId: currentUser?.id || 'system',
+    userName: currentUser?.name || 'System',
+    action: action,
+    details: details,
+    ipAddress: 'N/A' // Would require server-side implementation
+  };
+  
+  auditLogs.unshift(log); // Add to beginning for chronological order
+  
+  // Keep only last 1000 logs
+  if (auditLogs.length > 1000) {
+    auditLogs = auditLogs.slice(0, 1000);
+  }
+  
+  localStorage.setItem('auditLogs', JSON.stringify(auditLogs));
+  
+  return log;
+}
+
+// ==================== HELPER FUNCTIONS ====================
+function showLoading(message = 'Processing...') {
+  document.getElementById('loadingText').textContent = message;
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoading() {
+  setTimeout(() => {
+    document.getElementById('loadingOverlay').style.display = 'none';
+  }, 500);
+}
+
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  const toastMessage = document.getElementById('toastMessage');
+  const icon = toast.querySelector('i');
+  
+  if (type === 'error') {
+    toast.style.background = 'var(--danger)';
+    icon.className = 'fas fa-times-circle';
+  } else if (type === 'warning') {
+    toast.style.background = 'var(--warning)';
+    icon.className = 'fas fa-exclamation-triangle';
+  } else if (type === 'info') {
+    toast.style.background = 'var(--info)';
+    icon.className = 'fas fa-info-circle';
+  } else {
+    toast.style.background = 'var(--success)';
+    icon.className = 'fas fa-check-circle';
+  }
+  
+  toastMessage.textContent = message;
+  toast.style.display = 'flex';
+  
+  setTimeout(() => {
+    toast.style.display = 'none';
+  }, 3000);
+}
+
+function showConfirmationDialog(title, message, onConfirm) {
+  document.getElementById('confirmationTitle').textContent = title;
+  document.getElementById('confirmationMessage').textContent = message;
+  document.getElementById('confirmationDialog').style.display = 'flex';
+  
+  const confirmYes = document.getElementById('confirmYes');
+  const confirmNo = document.getElementById('confirmNo');
+  
+  // Remove existing event listeners
+  const newConfirmYes = confirmYes.cloneNode(true);
+  const newConfirmNo = confirmNo.cloneNode(true);
+  
+  confirmYes.parentNode.replaceChild(newConfirmYes, confirmYes);
+  confirmNo.parentNode.replaceChild(newConfirmNo, confirmNo);
+  
+  // Add new event listeners
+  newConfirmYes.onclick = function() {
+    document.getElementById('confirmationDialog').style.display = 'none';
+    if (onConfirm) onConfirm(true);
+  };
+  
+  newConfirmNo.onclick = function() {
+    document.getElementById('confirmationDialog').style.display = 'none';
+    if (onConfirm) onConfirm(false);
+  };
+}
+
+function formatCurrency(amount) {
+  if (!amount && amount !== 0) return 'K0';
+  return 'K' + parseInt(amount).toLocaleString();
+}
+
+// ==================== SESSION MANAGEMENT ====================
+function resetIdleTimer() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(logoutDueToInactivity, 30 * 60 * 1000); // 30 minutes
+}
+
+function logoutDueToInactivity() {
+  showToast('Session expired due to inactivity', 'warning');
+  logout();
+}
+
+// ==================== FORMATTING FUNCTIONS ====================
+function formatNRC(input) {
+  let value = input.value.replace(/\D/g, '');
+  
+  if (value.length > 6) {
+    value = value.substring(0, 6) + '/' + value.substring(6);
+  }
+  if (value.length > 9) {
+    value = value.substring(0, 9) + '/' + value.substring(9);
+  }
+  if (value.length > 11) {
+    value = value.substring(0, 11);
+  }
+  
+  input.value = value;
+  
+  const isValid = validateZambianNRC(value);
+  input.style.borderColor = value ? (isValid ? 'var(--success)' : 'var(--danger)') : 'var(--border)';
+  
+  return value;
+}
+
+function formatDOB(input) {
+  let value = input.value.replace(/\D/g, '');
+  
+  if (value.length > 2) {
+    value = value.substring(0, 2) + '/' + value.substring(2);
+  }
+  if (value.length > 5) {
+    value = value.substring(0, 5) + '/' + value.substring(5);
+  }
+  if (value.length > 10) {
+    value = value.substring(0, 10);
+  }
+  
+  input.value = value;
+  
+  const isValid = validateDOB(value);
+  input.style.borderColor = value ? (isValid ? 'var(--success)' : 'var(--danger)') : 'var(--border)';
+  
+  return value;
+}
+
+function validateDOB(dobString) {
+  if (!dobString || !/^\d{2}\/\d{2}\/\d{4}$/.test(dobString)) {
+    return false;
+  }
+  
+  const parts = dobString.split('/');
+  const day = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10);
+  const year = parseInt(parts[2], 10);
+  
+  if (month < 1 || month > 12) return false;
+  if (day < 1 || day > 31) return false;
+  
+  const daysInMonth = new Date(year, month, 0).getDate();
+  if (day > daysInMonth) return false;
+  
+  const dob = new Date(year, month - 1, day);
+  const today = new Date();
+  
+  if (dob > today) return false;
+  if (year < 1900) return false;
+  
+  return true;
+}
+
+function formatPhone(input) {
+  let value = input.value.replace(/\D/g, '');
+  
+  if (value.length > 10) {
+    value = value.substring(0, 10);
+  }
+  
+  input.value = value;
+  
+  const isValid = /^[0-9]{10}$/.test(value);
+  input.style.borderColor = value ? (isValid ? 'var(--success)' : 'var(--danger)') : 'var(--border)';
+  
+  return value;
+}
+
+// ==================== LOGIN SYSTEM ====================
+function login() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const role = document.getElementById('loginRole').value;
+  
+  if (!username || !password) {
+    showToast('Please enter username and password', 'error');
+    return;
+  }
+  
+  // Find user
+  const user = users.find(u => 
+    u.username === username && 
+    u.password === hashPassword(password) &&
+    u.role === role &&
+    u.status === 'active'
+  );
+  
+  if (user) {
+    // Update last login
+    user.lastLogin = Date.now();
+    localStorage.setItem('gceUsers', JSON.stringify(users));
+    
+    // Set current user
+    currentUser = user;
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    
+    // Hide login, show app
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appContainer').style.display = 'block';
+    document.getElementById('currentUser').textContent = user.name;
+    document.getElementById('userRoleBadge').textContent = user.role.toUpperCase();
+    document.getElementById('userRoleBadge').className = `role-badge role-${user.role}`;
+    
+    // Set up UI based on role
+    setupUIForRole(user.role, user.permissions);
+    
+    // Initialize app
+    initializeApp();
+    
+    // Log login
+    logAudit('LOGIN', `User ${user.name} logged in`);
+    
+    showToast('Login successful!');
+    
+    // Start idle timer
+    resetIdleTimer();
+    
+  } else {
+    showToast('Invalid username, password, or role', 'error');
+  }
+}
+
+function setupUIForRole(role, permissions) {
+  const smsButton = document.getElementById('smsButton');
+  const whatsappButton = document.getElementById('whatsappButton');
+  
+  if (smsButton) {
+    smsButton.style.display = permissions.sms ? 'block' : 'none';
+  }
+  
+  if (whatsappButton) {
+    whatsappButton.style.display = permissions.whatsapp ? 'block' : 'none';
+  }
+}
+
+function logout() {
+  showConfirmationDialog('Confirm Logout', 'Are you sure you want to logout?', function(confirmed) {
+    if (confirmed) {
+      // Log logout
+      if (currentUser) {
+        logAudit('LOGOUT', `User ${currentUser.name} logged out`);
+      }
+      
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      document.getElementById('appContainer').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      showToast('Logged out successfully');
+    }
+  });
+}
+
+// ==================== DOCUMENT FUNCTIONS ====================
+function toggleDocument(documentType) {
+  const checkbox = document.getElementById(documentType);
+  const card = event.currentTarget;
+  const statusText = document.getElementById(documentType + 'StatusText');
+  const statusIcon = document.getElementById(documentType + 'StatusIcon');
+  
+  checkbox.checked = !checkbox.checked;
+  
+  if (checkbox.checked) {
+    card.classList.add('selected');
+    statusText.textContent = 'Submitted';
+    statusText.className = 'status-submitted';
+    statusIcon.className = 'fas fa-check status-submitted';
+  } else {
+    card.classList.remove('selected');
+    statusText.textContent = 'Not Submitted';
+    statusText.className = 'status-not-submitted';
+    statusIcon.className = 'fas fa-times status-not-submitted';
+  }
+}
+
+function getDocumentStatus() {
+  const documents = {
+    nrcCopy: document.getElementById('nrcCopy').checked,
+    depositSlip: document.getElementById('depositSlip').checked
+  };
+  
+  return { documents: documents };
+}
+
+// ==================== PHOTO UPLOAD ====================
+function handlePhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  if (!file.type.match('image.*')) {
+    showToast('Please upload an image file (JPG, PNG)', 'error');
+    return;
+  }
+  
+  if (file.size > 2 * 1024 * 1024) {
+    showToast('File size must be less than 2MB', 'error');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    currentPhoto = e.target.result;
+    const photoPreview = document.getElementById('photoPreview');
+    photoPreview.innerHTML = `<img src="${currentPhoto}" alt="Passport Photo">`;
+    showToast('Photo uploaded successfully');
+  };
+  reader.onerror = function() {
+    showToast('Error reading file', 'error');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ==================== APP INITIALIZATION ====================
+function initializeApp() {
+  // Populate subjects grid
+  const subjectsGrid = document.getElementById('subjectsGrid');
+  subjectsGrid.innerHTML = subjects.map(subject => `
+    <div class="subject-card" onclick="toggleSubject('${subject.id}')" id="subject-${subject.id}">
+      <input type="checkbox" id="check-${subject.id}" onchange="calculateFees()">
+      <label for="check-${subject.id}" style="cursor: pointer;">${subject.name}</label>
+    </div>
+  `).join('');
+  
+  // Load records
+  loadRecords();
+  updateDashboardStats();
+  updatePaymentStatus();
+  updateQuickStats();
+  updateStorageUsed();
+  
+  // Set default date of birth (18 years ago)
+  const today = new Date();
+  const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+  const defaultDOB = eighteenYearsAgo.getDate().toString().padStart(2, '0') + '/' + 
+                     (eighteenYearsAgo.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                     eighteenYearsAgo.getFullYear();
+  document.getElementById('dob').value = defaultDOB;
+  document.getElementById('dob').style.borderColor = 'var(--success)';
+  
+  // Load settings into modal
+  loadSettingsToModal();
+  
+  // Check offline status
+  checkOfflineStatus();
+  
+  // Initialize debounced search
+  initializeDebouncedSearch();
+}
+
+function checkOfflineStatus() {
+  if (!navigator.onLine) {
+    document.getElementById('offlineIndicator').style.display = 'flex';
+  }
+  
+  window.addEventListener('online', () => {
+    document.getElementById('offlineIndicator').style.display = 'none';
+    showToast('Back online!', 'info');
+  });
+  
+  window.addEventListener('offline', () => {
+    document.getElementById('offlineIndicator').style.display = 'flex';
+    showToast('Working offline - data will be saved locally', 'warning');
+  });
+}
+
+function updateStorageUsed() {
+  const recordsSize = JSON.stringify(records).length;
+  const usersSize = JSON.stringify(users).length;
+  const settingsSize = JSON.stringify(settings).length;
+  const auditSize = JSON.stringify(auditLogs).length;
+  const totalSize = recordsSize + usersSize + settingsSize + auditSize;
+  
+  const sizeInKB = Math.round(totalSize / 1024);
+  document.getElementById('storageUsed').textContent = `${sizeInKB} KB`;
+}
+
+// ==================== FORM FUNCTIONS ====================
+function toggleSubject(subjectId) {
+  const checkbox = document.getElementById(`check-${subjectId}`);
+  const card = document.getElementById(`subject-${subjectId}`);
+  
+  checkbox.checked = !checkbox.checked;
+  if (checkbox.checked) {
+    card.classList.add('selected');
+  } else {
+    card.classList.remove('selected');
+  }
+  
+  calculateFees();
+}
+
+function calculateFees() {
+  const selectedSubjects = subjects.filter(subject => 
+    document.getElementById(`check-${subject.id}`).checked
+  );
+  
+  const numSubjects = selectedSubjects.length;
+  const numPracticals = selectedSubjects.filter(s => s.practical).length;
+  
+  const eczFee = numSubjects * settings.subjectFee;
+  const tuitionFee = numSubjects * settings.subjectFee;
+  const practicalFee = numPracticals * settings.practicalFee;
+  const centreFee = settings.centreFee;
+  const totalSchool = tuitionFee + practicalFee + centreFee;
+  const totalEcz = eczFee;
+  const grandTotal = totalSchool + totalEcz + settings.formFee;
+  
+  document.getElementById('numSubjects').value = numSubjects;
+  document.getElementById('eczFee').value = formatCurrency(eczFee);
+  document.getElementById('tuitionFee').value = formatCurrency(tuitionFee);
+  document.getElementById('practicalFee').value = formatCurrency(practicalFee);
+  document.getElementById('totalSchool').value = formatCurrency(totalSchool);
+  document.getElementById('totalEcz').value = formatCurrency(totalEcz);
+  document.getElementById('grandTotal').value = formatCurrency(grandTotal);
+}
+
+function validateAndCalculate() {
+  // Check permissions
+  if (!currentUser.permissions.create) {
+    showToast('You do not have permission to create records', 'error');
+    return false;
+  }
+  
+  // Basic validation
+  const requiredFields = ['title', 'othernames', 'surname', 'nrc', 'gender', 'dob', 'contact', 'province', 'district'];
+  for (const field of requiredFields) {
+    const element = document.getElementById(field);
+    if (!element.value || element.value.trim() === '') {
+      showToast(`Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`, 'error');
+      element.focus();
+      return false;
+    }
+  }
+  
+  // MODIFIED: NRC validation - only checks format, not Zambian validation
+  const nrc = document.getElementById('nrc').value.trim();
+  if (!validateZambianNRC(nrc)) {
+    showToast('Invalid NRC format. Use: 222222/22/1 (6 digits/2 digits/1 digit)', 'error');
+    document.getElementById('nrc').focus();
+    document.getElementById('nrc').style.borderColor = 'var(--danger)';
+    return false;
+  }
+  
+  // DOB validation
+  const dob = document.getElementById('dob').value.trim();
+  if (!validateDOB(dob)) {
+    showToast('Invalid date of birth. Use DD/MM/YYYY format', 'error');
+    document.getElementById('dob').focus();
+    document.getElementById('dob').style.borderColor = 'var(--danger)';
+    return false;
+  }
+  
+  // Phone validation
+  const phone = document.getElementById('contact').value.trim();
+  if (!/^[0-9]{10}$/.test(phone)) {
+    showToast('Invalid phone number. Must be exactly 10 digits', 'error');
+    document.getElementById('contact').focus();
+    document.getElementById('contact').style.borderColor = 'var(--danger)';
+    return false;
+  }
+  
+  // Guardian phone validation
+  const guardianPhone = document.getElementById('guardianContact').value.trim();
+  if (!/^[0-9]{10}$/.test(guardianPhone)) {
+    showToast('Invalid guardian phone number. Must be exactly 10 digits', 'error');
+    document.getElementById('guardianContact').focus();
+    document.getElementById('guardianContact').style.borderColor = 'var(--danger)';
+    return false;
+  }
+  
+  // Subjects validation
+  const selectedSubjects = subjects.filter(subject => 
+    document.getElementById(`check-${subject.id}`).checked
+  );
+  
+  if (selectedSubjects.length === 0) {
+    showToast('Please select at least one subject', 'error');
+    return false;
+  }
+  
+  calculateFees();
+  showToast('Fees calculated successfully!');
+  return true;
+}
+
+function updatePaymentStatus() {
+  const schoolPayment = parseFloat(document.getElementById('schoolPayment').value) || 0;
+  const eczPayment = parseFloat(document.getElementById('eczPayment').value) || 0;
+  const formFeeStatus = document.getElementById('formFeeStatus').value;
+  
+  const totalSchool = parseFloat(document.getElementById('totalSchool').value.replace('K', '').replace(',', '')) || 0;
+  const totalEcz = parseFloat(document.getElementById('totalEcz').value.replace('K', '').replace(',', '')) || 0;
+  const formFee = settings.formFee;
+  
+  const paymentStatusCards = document.getElementById('paymentStatusCards');
+  
+  let status = 'Pending';
+  let statusColor = 'unpaid';
+  let statusText = 'Payment Required';
+  
+  if (formFeeStatus === 'paid' && schoolPayment >= totalSchool && eczPayment >= totalEcz) {
+    status = 'Fully Paid';
+    statusColor = 'paid';
+    statusText = 'All fees paid';
+  } else if (schoolPayment > 0 || eczPayment > 0 || formFeeStatus === 'paid') {
+    status = 'Partial Payment';
+    statusColor = 'partial';
+    statusText = 'Partial payment made';
+  } else {
+    status = 'Query';
+  }
+  
+  paymentStatusCards.innerHTML = `
+    <div class="status-card ${formFeeStatus === 'paid' ? 'paid' : 'unpaid'}">
+      <h4><i class="fas fa-file-invoice"></i> Form Fee</h4>
+      <p>Amount: ${formatCurrency(formFee)}</p>
+      <p>Status: ${formFeeStatus === 'paid' ? 'Paid' : 'Not Paid'}</p>
+      <span class="status-badge ${formFeeStatus === 'paid' ? 'badge-paid' : 'badge-unpaid'}">
+        ${formFeeStatus === 'paid' ? 'PAID' : 'NOT PAID'}
+      </span>
+    </div>
+    
+    <div class="status-card ${schoolPayment >= totalSchool ? 'paid' : schoolPayment > 0 ? 'partial' : 'unpaid'}">
+      <h4><i class="fas fa-school"></i> School Fee</h4>
+      <p>Required: ${formatCurrency(totalSchool)}</p>
+      <p>Paid: ${formatCurrency(schoolPayment)}</p>
+      <p>Balance: ${formatCurrency(totalSchool - schoolPayment)}</p>
+      <span class="status-badge ${schoolPayment >= totalSchool ? 'badge-paid' : schoolPayment > 0 ? 'badge-partial' : 'badge-unpaid'}">
+        ${schoolPayment >= totalSchool ? 'PAID' : schoolPayment > 0 ? 'PARTIAL' : 'NOT PAID'}
+      </span>
+    </div>
+    
+    <div class="status-card ${eczPayment >= totalEcz ? 'paid' : eczPayment > 0 ? 'partial' : 'unpaid'}">
+      <h4><i class="fas fa-university"></i> ECZ Fee</h4>
+      <p>Required: ${formatCurrency(totalEcz)}</p>
+      <p>Paid: ${formatCurrency(eczPayment)}</p>
+      <p>Balance: ${formatCurrency(totalEcz - eczPayment)}</p>
+      <span class="status-badge ${eczPayment >= totalEcz ? 'badge-paid' : eczPayment > 0 ? 'badge-partial' : 'badge-unpaid'}">
+        ${eczPayment >= totalEcz ? 'PAID' : eczPayment > 0 ? 'PARTIAL' : 'NOT PAID'}
+      </span>
+    </div>
+    
+    <div class="status-card ${statusColor}">
+      <h4><i class="fas fa-info-circle"></i> Overall Status</h4>
+      <p><strong>${status}</strong></p>
+      <p>${statusText}</p>
+      <span class="status-badge ${statusColor === 'paid' ? 'badge-paid' : statusColor === 'partial' ? 'badge-partial' : 'badge-unpaid'}">
+        ${status.toUpperCase()}
+      </span>
+    </div>
+  `;
+}
+
+// ==================== DASHBOARD STATS ====================
+function updateDashboardStats() {
+  const totalRegistrations = records.length;
+  
+  const schoolFeesCollected = records.reduce((sum, r) => sum + r.schoolPaid, 0);
+  const eczFeesCollected = records.reduce((sum, r) => sum + r.eczPaid, 0);
+  const formFeesCollected = records.reduce((sum, r) => sum + (r.formFeePaid ? r.formFee : 0), 0);
+  const totalFeesCollected = schoolFeesCollected + eczFeesCollected + formFeesCollected;
+  
+  const completedPayments = records.filter(r => r.status === 'Fully Paid').length;
+  const partialPayments = records.filter(r => r.status.includes('Partial')).length;
+  const pendingRegistrations = records.filter(r => r.status === 'Pending' || r.status === 'Query').length;
+  
+  document.getElementById('totalRegistrations').textContent = totalRegistrations;
+  document.getElementById('schoolFeesCollected').textContent = formatCurrency(schoolFeesCollected);
+  document.getElementById('eczFeesCollected').textContent = formatCurrency(eczFeesCollected);
+  document.getElementById('formFeesCollected').textContent = formatCurrency(formFeesCollected);
+  document.getElementById('totalFees').textContent = formatCurrency(totalFeesCollected);
+  document.getElementById('completedPayments').textContent = completedPayments;
+  document.getElementById('partialPayments').textContent = partialPayments;
+  document.getElementById('pendingRegistrations').textContent = pendingRegistrations;
+}
+
+// ==================== RECORDS MANAGEMENT ====================
+function loadRecords() {
+  const tbody = document.getElementById('recordsTableBody');
+  tbody.innerHTML = '';
+  
+  if (records.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="15" style="text-align: center; padding: 30px; color: var(--text-light);">
+          <i class="fas fa-database" style="font-size: 48px; margin-bottom: 15px; display: block; color: var(--border);"></i>
+          No registration records found. Submit your first registration above.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  // Sort by date (newest first)
+  const sortedRecords = [...records].sort((a, b) => b.timestamp - a.timestamp);
+  
+  sortedRecords.forEach((record, index) => {
+    const statusClass = record.status === 'Fully Paid' ? 'badge-paid' : 
+                       record.status.includes('Partial') ? 'badge-partial' : 
+                       record.status === 'Query' ? 'badge-unpaid' : 'badge-unpaid';
+    
+    // Check edit/delete permissions based on user role
+    const canEdit = currentUser.role === 'admin' && currentUser.permissions.edit;
+    const canDelete = currentUser.role === 'admin' && currentUser.permissions.delete;
+    
+    const isSelected = selectedRecords.has(record.id);
+    
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><input type="checkbox" class="record-checkbox" data-id="${record.id}" ${isSelected ? 'checked' : ''} onchange="toggleRecordSelection(${record.id})"></td>
+      <td>${index + 1}</td>
+      <td>
+        ${record.photo ? 
+          `<img src="${record.photo}" alt="Photo" style="width: 35px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border);">` : 
+          `<div style="width: 35px; height: 45px; background: var(--light-bg); display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+            <i class="fas fa-user" style="color: var(--text-light); font-size: 14px;"></i>
+          </div>`}
+      </td>
+      <td>${record.fullName}</td>
+      <td>${record.nrc}</td>
+      <td>
+        ${record.documents?.nrcCopy ? '<span style="color: var(--success); font-size: 12px;">NRC✓</span> ' : ''}
+        ${record.documents?.depositSlip ? '<span style="color: var(--success); font-size: 12px;">Slip✓</span>' : ''}
+        ${!record.documents || (!record.documents.nrcCopy && !record.documents.depositSlip) ? '<span style="color: var(--danger); font-size: 12px;">None</span>' : ''}
+      </td>
+      <td>${record.dob}</td>
+      <td>${record.district}</td>
+      <td>${record.numSubjects}</td>
+      <td>${formatCurrency(record.schoolPaid)}<br><small>${formatCurrency(record.schoolRequired)}</small></td>
+      <td>${formatCurrency(record.eczPaid)}<br><small>${formatCurrency(record.eczRequired)}</small></td>
+      <td>${record.formFeePaid ? 'Paid' : 'Not Paid'}<br><small>${formatCurrency(record.formFee)}</small></td>
+      <td>
+        <span class="status-badge ${statusClass}" style="font-size: 11px;">
+          ${record.status}
+        </span>
+      </td>
+      <td style="font-size: 11px;">${record.date}</td>
+      <td>
+        <div class="action-buttons-cell">
+          <button class="view-btn" onclick="viewRecord(${record.id})" title="View">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button class="pdf-btn" onclick="generateConfirmationPDF(${record.id})" title="Download PDF">
+            <i class="fas fa-file-pdf"></i>
+          </button>
+          <button class="print-btn" onclick="printConfirmationForm(${record.id})" title="Print Form">
+            <i class="fas fa-print"></i>
+          </button>
+          ${canEdit ? `
+            <button class="edit-btn" onclick="editRecord(${record.id})" title="Edit">
+              <i class="fas fa-edit"></i>
+            </button>
+          ` : ''}
+          <button class="receipt-btn" onclick="generateReceiptForRecord(${record.id})" title="Receipt">
+            <i class="fas fa-receipt"></i>
+          </button>
+          ${canDelete ? `
+            <button class="delete-btn" onclick="deleteRecord(${record.id})" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          ` : ''}
+        </div>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+  
+  updateSelectedCount();
+}
+
+function toggleRecordSelection(id) {
+  if (selectedRecords.has(id)) {
+    selectedRecords.delete(id);
+  } else {
+    selectedRecords.add(id);
+  }
+  updateSelectedCount();
+}
+
+function toggleSelectAll(checkbox) {
+  const checkboxes = document.querySelectorAll('.record-checkbox');
+  checkboxes.forEach(cb => {
+    const id = parseInt(cb.dataset.id);
+    cb.checked = checkbox.checked;
+    if (checkbox.checked) {
+      selectedRecords.add(id);
+    } else {
+      selectedRecords.delete(id);
+    }
+  });
+  updateSelectedCount();
+}
+
+function updateSelectedCount() {
+  const count = selectedRecords.size;
+  document.getElementById('selectedCount').textContent = `${count} records selected`;
+  
+  // Show/hide batch operations panel
+  document.getElementById('batchOperations').style.display = count > 0 ? 'block' : 'none';
+}
+
+function selectAllRecords() {
+  const checkboxes = document.querySelectorAll('.record-checkbox');
+  checkboxes.forEach(cb => {
+    const id = parseInt(cb.dataset.id);
+    cb.checked = true;
+    selectedRecords.add(id);
+  });
+  document.getElementById('selectAll').checked = true;
+  updateSelectedCount();
+}
+
+function deselectAllRecords() {
+  const checkboxes = document.querySelectorAll('.record-checkbox');
+  checkboxes.forEach(cb => {
+    const id = parseInt(cb.dataset.id);
+    cb.checked = false;
+    selectedRecords.delete(id);
+  });
+  document.getElementById('selectAll').checked = false;
+  updateSelectedCount();
+}
+
+function toggleBatchOperations() {
+  const panel = document.getElementById('batchOperations');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function executeBatchAction() {
+  const action = document.getElementById('batchAction').value;
+  const selectedIds = Array.from(selectedRecords);
+  
+  if (selectedIds.length === 0) {
+    showToast('No records selected', 'error');
+    return;
+  }
+  
+  if (!action) {
+    showToast('Please select an action', 'error');
+    return;
+  }
+  
+  switch(action) {
+    case 'export':
+      exportSelectedRecords(selectedIds);
+      break;
+    case 'update_status':
+      updateBatchStatus(selectedIds);
+      break;
+    case 'generate_receipts':
+      generateBatchReceipts(selectedIds);
+      break;
+    case 'generate_confirmations':
+      generateBatchConfirmations(selectedIds);
+      break;
+  }
+}
+
+function updateBatchStatus(recordIds) {
+  showConfirmationDialog(
+    'Update Multiple Records',
+    `Update ${recordIds.length} records?`,
+    function(confirmed) {
+      if (confirmed) {
+        const newStatus = prompt('Enter new status (Fully Paid, Partial Payment, Pending, Query):', 'Fully Paid');
+        if (newStatus) {
+          recordIds.forEach(id => {
+            const record = records.find(r => r.id === id);
+            if (record) {
+              record.status = newStatus;
+              record.updatedAt = Date.now();
+              record.updatedBy = currentUser.id;
+            }
+          });
+          
+          localStorage.setItem('gceRecords', JSON.stringify(records));
+          loadRecords();
+          updateDashboardStats();
+          showToast(`Updated ${recordIds.length} records`);
+          
+          // Log the action
+          logAudit('BATCH_UPDATE', `Updated ${recordIds.length} records to status: ${newStatus}`);
+        }
+      }
+    }
+  );
+}
+
+function generateBatchReceipts(recordIds) {
+  showLoading('Generating batch receipts...');
+  
+  // Create a combined PDF for all receipts
+  const tempElement = document.createElement('div');
+  tempElement.className = 'pdf-confirmation';
+  
+  let content = `
+    <div class="pdf-header">
+      <h1>KATUNDA SECONDARY SCHOOL</h1>
+      <h2>BATCH PAYMENT RECEIPTS</h2>
+      <p>Luampa District - Western Province</p>
+      <p>Date: ${new Date().toLocaleDateString('en-GB')}</p>
+      <p>Total Receipts: ${recordIds.length}</p>
+    </div>
+  `;
+  
+  recordIds.forEach((id, index) => {
+    const record = records.find(r => r.id === id);
+    if (record) {
+      const totalPaid = record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0);
+      
+      content += `
+        <div style="page-break-after: always; margin-top: 30px;">
+          <h3 style="color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px;">
+            Receipt ${index + 1}: ${record.fullName}
+          </h3>
+          <table class="info-table">
+            <tr>
+              <td class="info-label">Candidate Name:</td>
+              <td>${record.fullName}</td>
+            </tr>
+            <tr>
+              <td class="info-label">NRC Number:</td>
+              <td>${record.nrc}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Registration Date:</td>
+              <td>${record.date}</td>
+            </tr>
+            <tr>
+              <td class="info-label">School Fees Paid:</td>
+              <td>${formatCurrency(record.schoolPaid)}</td>
+            </tr>
+            <tr>
+              <td class="info-label">ECZ Fees Paid:</td>
+              <td>${formatCurrency(record.eczPaid)}</td>
+            </tr>
+            <tr>
+              <td class="info-label">Form Fees Paid:</td>
+              <td>${record.formFeePaid ? formatCurrency(record.formFee) : 'K0'}</td>
+            </tr>
+            <tr style="background: #f5f5f5;">
+              <td class="info-label"><strong>TOTAL PAID:</strong></td>
+              <td><strong>${formatCurrency(totalPaid)}</strong></td>
+            </tr>
+            <tr>
+              <td class="info-label">Payment Status:</td>
+              <td>${record.status}</td>
+            </tr>
+          </table>
+        </div>
+      `;
+    }
+  });
+  
+  tempElement.innerHTML = content;
+  document.body.appendChild(tempElement);
+  
+  const opt = {
+    margin: 0.5,
+    filename: `Batch_Receipts_${Date.now()}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      logging: false
+    },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(tempElement).save().then(() => {
+    document.body.removeChild(tempElement);
+    hideLoading();
+    showToast(`Generated ${recordIds.length} receipts`);
+    
+    // Log the action
+    logAudit('BATCH_RECEIPTS', `Generated ${recordIds.length} receipts`);
+  });
+}
+
+function generateBatchConfirmations(recordIds) {
+  showLoading('Generating batch confirmations...');
+  
+  // Create a combined PDF for all confirmations
+  const tempElement = document.createElement('div');
+  tempElement.className = 'pdf-confirmation';
+  
+  let content = `
+    <div class="pdf-header">
+      <h1>KATUNDA SECONDARY SCHOOL</h1>
+      <h2>BATCH REGISTRATION CONFIRMATIONS</h2>
+      <p>Luampa District - Western Province</p>
+      <p>Date: ${new Date().toLocaleDateString('en-GB')}</p>
+      <p>Total Confirmations: ${recordIds.length}</p>
+    </div>
+  `;
+  
+  recordIds.forEach((id, index) => {
+    const record = records.find(r => r.id === id);
+    if (record) {
+      content += `
+        <div style="page-break-after: always; margin-top: 30px;">
+          <h3 style="color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px;">
+            Confirmation ${index + 1}: ${record.fullName}
+          </h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+              <h4>Candidate Information</h4>
+              <p><strong>Name:</strong> ${record.fullName}</p>
+              <p><strong>NRC:</strong> ${record.nrc}</p>
+              <p><strong>DOB:</strong> ${record.dob}</p>
+              <p><strong>Contact:</strong> ${record.contact}</p>
+            </div>
+            <div>
+              <h4>Financial Summary</h4>
+              <p><strong>School Fee:</strong> ${formatCurrency(record.schoolPaid)} / ${formatCurrency(record.schoolRequired)}</p>
+              <p><strong>ECZ Fee:</strong> ${formatCurrency(record.eczPaid)} / ${formatCurrency(record.eczRequired)}</p>
+              <p><strong>Form Fee:</strong> ${record.formFeePaid ? 'Paid' : 'Not Paid'}</p>
+              <p><strong>Status:</strong> ${record.status}</p>
+            </div>
+          </div>
+          <div style="margin-top: 15px;">
+            <h4>Subjects (${record.numSubjects})</h4>
+            <p>${record.subjects.join(', ')}</p>
+          </div>
+        </div>
+      `;
+    }
+  });
+  
+  tempElement.innerHTML = content;
+  document.body.appendChild(tempElement);
+  
+  const opt = {
+    margin: 0.5,
+    filename: `Batch_Confirmations_${Date.now()}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      logging: false
+    },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(tempElement).save().then(() => {
+    document.body.removeChild(tempElement);
+    hideLoading();
+    showToast(`Generated ${recordIds.length} confirmations`);
+    
+    // Log the action
+    logAudit('BATCH_CONFIRMATIONS', `Generated ${recordIds.length} confirmations`);
+  });
+}
+
+function exportSelectedRecords(recordIds) {
+  const selectedRecordsData = records.filter(r => recordIds.includes(r.id));
+  exportToExcel(selectedRecordsData, `Selected_Records_${Date.now()}.xlsx`);
+}
+
+function viewRecord(id) {
+  const record = records.find(r => r.id === id);
+  if (!record) return;
+  
+  const modalContent = document.getElementById('viewModalContent');
+  modalContent.innerHTML = `
+    <div style="padding: 15px;">
+      <div style="display: grid; grid-template-columns: 120px 1fr; gap: 15px; margin-bottom: 20px;">
+        <div style="text-align: center;">
+          ${record.photo ? 
+            `<img src="${record.photo}" alt="Photo" style="width: 100px; height: 130px; object-fit: cover; border-radius: 6px; border: 3px solid var(--primary);">` : 
+            `<div style="width: 100px; height: 130px; background: var(--light-bg); display: flex; align-items: center; justify-content: center; border-radius: 6px; margin: 0 auto;">
+              <i class="fas fa-user" style="font-size: 36px; color: var(--text-light);"></i>
+            </div>`}
+        </div>
+        <div>
+          <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 18px;">${record.fullName}</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px;">
+            <div><strong>NRC:</strong> ${record.nrc}</div>
+            <div><strong>Gender:</strong> ${record.gender}</div>
+            <div><strong>DOB:</strong> ${record.dob}</div>
+            <div><strong>Contact:</strong> ${record.contact}</div>
+            <div><strong>District:</strong> ${record.district}</div>
+            <div><strong>Province:</strong> ${record.province}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background: var(--light-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h4 style="color: var(--primary); margin-bottom: 10px; font-size: 15px;">
+          <i class="fas fa-file-upload"></i> Documents Submitted
+        </h4>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          ${record.documents?.nrcCopy ? '<span style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 4px; font-size: 12px;">NRC Copy</span>' : ''}
+          ${record.documents?.depositSlip ? '<span style="background: #f0f4c3; color: #827717; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Deposit Slip</span>' : ''}
+          ${!record.documents || (!record.documents.nrcCopy && !record.documents.depositSlip) ? '<span style="background: #f5f5f5; color: #616161; padding: 4px 8px; border-radius: 4px; font-size: 12px;">No Documents Submitted</span>' : ''}
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+        <div style="background: var(--light-bg); padding: 15px; border-radius: 8px;">
+          <h4 style="color: var(--primary); margin-bottom: 10px; font-size: 15px;">
+            <i class="fas fa-book-open"></i> Subjects (${record.numSubjects})
+          </h4>
+          <ul style="margin: 0; padding-left: 20px; font-size: 13px;">
+            ${record.subjects.map(subject => `<li>${subject}</li>`).join('')}
+          </ul>
+        </div>
+        
+        <div style="background: var(--light-bg); padding: 15px; border-radius: 8px;">
+          <h4 style="color: var(--primary); margin-bottom: 10px; font-size: 15px;">
+            <i class="fas fa-money-bill-wave"></i> Financial Summary
+          </h4>
+          <div style="font-size: 13px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <span>School Fee:</span>
+              <span>${formatCurrency(record.schoolPaid)} / ${formatCurrency(record.schoolRequired)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <span>ECZ Fee:</span>
+              <span>${formatCurrency(record.eczPaid)} / ${formatCurrency(record.eczRequired)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span>Form Fee:</span>
+              <span>${record.formFeePaid ? 'Paid' : 'Not Paid'} (${formatCurrency(record.formFee)})</span>
+            </div>
+            <div style="border-top: 1px solid var(--border); padding-top: 10px;">
+              <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                <span>Status:</span>
+                <span class="status-badge ${record.status === 'Fully Paid' ? 'badge-paid' : record.status.includes('Partial') ? 'badge-partial' : 'badge-unpaid'}">
+                  ${record.status}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 20px;">
+        <button class="login-btn" onclick="generateConfirmationPDF(${record.id})" style="background: var(--gradient-secondary); padding: 10px 20px;">
+          <i class="fas fa-file-pdf"></i> Download Confirmation PDF
+        </button>
+        <button class="login-btn" onclick="printConfirmationForm(${record.id})" style="background: var(--gradient-info); padding: 10px 20px; margin-left: 10px;">
+          <i class="fas fa-print"></i> Print Confirmation Form
+        </button>
+        <button class="login-btn" onclick="generateReceiptForRecord(${record.id})" style="background: var(--gradient-success); padding: 10px 20px; margin-left: 10px;">
+          <i class="fas fa-receipt"></i> Generate Receipt
+        </button>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('viewModal').style.display = 'flex';
+}
+
+function editRecord(id) {
+  const record = records.find(r => r.id === id);
+  if (!record) return;
+  
+  // Check permissions - only admin can edit
+  if (currentUser.role !== 'admin') {
+    showToast('Only administrators can edit records', 'error');
+    return;
+  }
+  
+  // Populate form with record data
+  document.getElementById('title').value = record.title;
+  document.getElementById('othernames').value = record.othernames;
+  document.getElementById('surname').value = record.surname;
+  document.getElementById('nrc').value = record.nrc;
+  document.getElementById('gender').value = record.gender;
+  document.getElementById('dob').value = record.dob;
+  document.getElementById('contact').value = record.contact;
+  document.getElementById('email').value = record.email || '';
+  document.getElementById('province').value = record.province;
+  document.getElementById('district').value = record.district;
+  document.getElementById('residentialAddress').value = record.residentialAddress;
+  document.getElementById('guardianName').value = record.guardianName;
+  document.getElementById('guardianNRC').value = record.guardianNRC || '';
+  document.getElementById('guardianContact').value = record.guardianContact;
+  document.getElementById('guardianAddress').value = record.guardianAddress;
+  document.getElementById('relationship').value = record.relationship;
+  document.getElementById('schoolPayment').value = record.schoolPaid;
+  document.getElementById('eczPayment').value = record.eczPaid;
+  document.getElementById('formFeeStatus').value = record.formFeePaid ? 'paid' : 'unpaid';
+  document.getElementById('paymentReference').value = record.paymentReference || '';
+  
+  // Set documents
+  if (record.documents) {
+    document.getElementById('nrcCopy').checked = record.documents.nrcCopy || false;
+    document.getElementById('depositSlip').checked = record.documents.depositSlip || false;
+    
+    // Update document display
+    if (record.documents.nrcCopy) {
+      document.querySelector('[onclick="toggleDocument(\'nrcCopy\')"]').classList.add('selected');
+      document.getElementById('nrcStatusText').textContent = 'Submitted';
+      document.getElementById('nrcStatusIcon').className = 'fas fa-check status-submitted';
+    }
+    if (record.documents.depositSlip) {
+      document.querySelector('[onclick="toggleDocument(\'depositSlip\')"]').classList.add('selected');
+      document.getElementById('depositStatusText').textContent = 'Submitted';
+      document.getElementById('depositStatusIcon').className = 'fas fa-check status-submitted';
+    }
+  }
+  
+  // Set photo
+  if (record.photo) {
+    currentPhoto = record.photo;
+    const photoPreview = document.getElementById('photoPreview');
+    photoPreview.innerHTML = `<img src="${record.photo}" alt="Passport Photo">`;
+  }
+  
+  // Set subjects
+  subjects.forEach(subject => {
+    const checkbox = document.getElementById(`check-${subject.id}`);
+    const card = document.getElementById(`subject-${subject.id}`);
+    if (record.subjects.includes(subject.name)) {
+      checkbox.checked = true;
+      card.classList.add('selected');
+    } else {
+      checkbox.checked = false;
+      card.classList.remove('selected');
+    }
+  });
+  
+  // Calculate fees
+  calculateFees();
+  updatePaymentStatus();
+  
+  // Remove the record from records array
+  const recordIndex = records.findIndex(r => r.id === id);
+  if (recordIndex !== -1) {
+    records.splice(recordIndex, 1);
+  }
+  
+  showToast('Record loaded for editing. Make changes and click Submit Registration.');
+  
+  // Log the action
+  logAudit('EDIT_RECORD', `Loaded record for editing: ${record.fullName} (ID: ${record.id})`);
+}
+
+function deleteRecord(id) {
+  const record = records.find(r => r.id === id);
+  if (!record) return;
+  
+  // Check permissions - only admin can delete
+  if (currentUser.role !== 'admin') {
+    showToast('Only administrators can delete records', 'error');
+    return;
+  }
+  
+  showConfirmationDialog('Delete Record', 
+    `Are you sure you want to delete registration for ${record.fullName}? This action cannot be undone.`,
+    function(confirmed) {
+      if (confirmed) {
+        const recordIndex = records.findIndex(r => r.id === id);
+        if (recordIndex !== -1) {
+          records.splice(recordIndex, 1);
+          localStorage.setItem('gceRecords', JSON.stringify(records));
+          loadRecords();
+          updateDashboardStats();
+          updateQuickStats();
+          updateStorageUsed();
+          showToast('Record deleted successfully!');
+          
+          // Log the action
+          logAudit('DELETE_RECORD', `Deleted record: ${record.fullName} (ID: ${record.id})`);
+        }
+      }
+    });
+}
+
+// ==================== ENHANCED PDF CONFIRMATION FORM ====================
+function generateConfirmationPDF(recordId) {
+  const record = records.find(r => r.id === recordId);
+  if (!record) return;
+  
+  showLoading('Generating confirmation form...');
+  
+  // Create a temporary element for PDF generation
+  const tempElement = document.createElement('div');
+  tempElement.className = 'pdf-confirmation';
+  
+  const registrationDate = new Date(record.timestamp).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  
+  tempElement.innerHTML = `
+    <div class="pdf-header">
+      <h1>KATUNDA SECONDARY SCHOOL</h1>
+      <h2>GCE REGISTRATION CONFIRMATION FORM</h2>
+      <p>Luampa District - Western Province</p>
+      <p>Registration No: KAT-GCE-${record.id.toString().slice(-6)}</p>
+      <p>Date: ${registrationDate}</p>
+      <p style="color: #666; font-size: 12px;">Generated by: ${currentUser.name} (${currentUser.role})</p>
+    </div>
+    
+    <div class="candidate-photo-section">
+      ${record.photo ? 
+        `<img src="${record.photo}" class="candidate-photo" alt="Candidate Photo">` :
+        `<div class="photo-placeholder-pdf">
+          <i class="fas fa-user" style="font-size: 36px; color: #ccc; margin-bottom: 10px;"></i>
+          <span>Photo Not Available</span>
+        </div>`}
+      <p style="font-size: 11px; color: #666; margin-top: 5px;">Passport Photo</p>
+    </div>
+    
+    <div class="section-title">CANDIDATE INFORMATION</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">Full Name:</td>
+        <td>${record.fullName}</td>
+      </tr>
+      <tr>
+        <td class="info-label">NRC Number:</td>
+        <td>${record.nrc}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Gender:</td>
+        <td>${record.gender}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Date of Birth:</td>
+        <td>${record.dob}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Contact Number:</td>
+        <td>${record.contact}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Email Address:</td>
+        <td>${record.email || 'N/A'}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Residential Address:</td>
+        <td>${record.residentialAddress}</td>
+      </tr>
+      <tr>
+        <td class="info-label">District:</td>
+        <td>${record.district}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Province:</td>
+        <td>${record.province}</td>
+      </tr>
+    </table>
+    
+    <div class="section-title">PARENT/GUARDIAN INFORMATION</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">Name:</td>
+        <td>${record.guardianName}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Relationship:</td>
+        <td>${record.relationship}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Contact Number:</td>
+        <td>${record.guardianContact}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Address:</td>
+        <td>${record.guardianAddress}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Guardian NRC:</td>
+        <td>${record.guardianNRC || 'N/A'}</td>
+      </tr>
+    </table>
+    
+    <div class="section-title">SUBJECTS REGISTERED (${record.numSubjects} Subjects)</div>
+    <table class="info-table">
+      ${record.subjects.map((subject, index) => `
+        <tr>
+          <td class="info-label">Subject ${index + 1}:</td>
+          <td>${subject}</td>
+        </tr>
+      `).join('')}
+    </table>
+    
+    <div class="section-title">FINANCIAL DETAILS</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">School Fee Required:</td>
+        <td>${formatCurrency(record.schoolRequired)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">School Fee Paid:</td>
+        <td>${formatCurrency(record.schoolPaid)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">ECZ Fee Required:</td>
+        <td>${formatCurrency(record.eczRequired)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">ECZ Fee Paid:</td>
+        <td>${formatCurrency(record.eczPaid)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Form Fee Required:</td>
+        <td>${formatCurrency(record.formFee)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Form Fee Paid:</td>
+        <td>${record.formFeePaid ? formatCurrency(record.formFee) : 'Not Paid'}</td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>Total Required:</strong></td>
+        <td><strong>${formatCurrency(record.schoolRequired + record.eczRequired + record.formFee)}</strong></td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>Total Paid:</strong></td>
+        <td><strong>${formatCurrency(record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0))}</strong></td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>Balance Due:</strong></td>
+        <td><strong>${formatCurrency((record.schoolRequired + record.eczRequired + record.formFee) - (record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0)))}</strong></td>
+      </tr>
+      <tr style="background: ${record.status === 'Fully Paid' ? '#e8f5e9' : record.status.includes('Partial') ? '#fff3e0' : '#ffebee'}">
+        <td class="info-label"><strong>Payment Status:</strong></td>
+        <td><strong>${record.status}</strong></td>
+      </tr>
+    </table>
+    
+    <div class="section-title">DOCUMENTS SUBMITTED</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">NRC Copy:</td>
+        <td>${record.documents?.nrcCopy ? '✓ Submitted' : '✗ Not Submitted'}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Deposit Slip:</td>
+        <td>${record.documents?.depositSlip ? '✓ Submitted' : '✗ Not Submitted'}</td>
+      </tr>
+    </table>
+    
+    <div class="signature-section">
+      <p>This is to confirm that the above candidate has been registered for GCE 2025-2026 examinations.</p>
+      <div style="margin-top: 40px;">
+        <div style="float: left; width: 300px;">
+          <p>___________________________</p>
+          <p><strong>Candidate's Signature</strong></p>
+          <p>Date: ___________________</p>
+        </div>
+        <div style="float: right; width: 300px; text-align: right;">
+          <p>___________________________</p>
+          <p><strong>School Registrar</strong></p>
+          <p>Date: ___________________</p>
+        </div>
+        <div style="clear: both;"></div>
+      </div>
+    </div>
+    
+    <div class="footer-note">
+      <p>This is an official confirmation from Katunda Secondary School</p>
+      <p>For inquiries contact: 0962730221 | katundasec@edu.zm</p>
+      <p>Luampa District, Western Province</p>
+      <p style="margin-top: 10px; font-size: 10px;">Generated on: ${new Date().toLocaleString()} | System Version: 2.0</p>
+    </div>
+  `;
+  
+  document.body.appendChild(tempElement);
+  
+  // Generate PDF
+  const opt = {
+    margin: 0.5,
+    filename: `GCE_Confirmation_${record.fullName.replace(/[^a-z0-9]/gi, '_')}_${recordId}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      logging: false
+    },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(tempElement).save().then(() => {
+    document.body.removeChild(tempElement);
+    hideLoading();
+    showToast('Confirmation PDF downloaded successfully');
+    
+    // Log the action
+    logAudit('DOWNLOAD_PDF', `Downloaded confirmation PDF for: ${record.fullName} (ID: ${record.id})`);
+  }).catch(err => {
+    document.body.removeChild(tempElement);
+    hideLoading();
+    showToast('Error generating PDF: ' + err.message, 'error');
+  });
+}
+
+function generateRecordsPDF() {
+  if (records.length === 0) {
+    showToast('No records to export', 'warning');
+    return;
+  }
+  
+  showLoading('Generating records PDF...');
+  
+  const tempElement = document.createElement('div');
+  tempElement.className = 'pdf-confirmation';
+  
+  let content = `
+    <div class="pdf-header">
+      <h1>KATUNDA SECONDARY SCHOOL</h1>
+      <h2>ALL REGISTRATION RECORDS REPORT</h2>
+      <p>Luampa District - Western Province</p>
+      <p>Date: ${new Date().toLocaleDateString('en-GB')}</p>
+      <p>Total Records: ${records.length}</p>
+    </div>
+    
+    <div class="section-title">SUMMARY STATISTICS</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">Total Registrations:</td>
+        <td>${records.length}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Fully Paid:</td>
+        <td>${records.filter(r => r.status === 'Fully Paid').length}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Partial Payments:</td>
+        <td>${records.filter(r => r.status.includes('Partial')).length}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Pending/Query:</td>
+        <td>${records.filter(r => r.status === 'Pending' || r.status === 'Query').length}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Total School Fees Collected:</td>
+        <td>${formatCurrency(records.reduce((sum, r) => sum + r.schoolPaid, 0))}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Total ECZ Fees Collected:</td>
+        <td>${formatCurrency(records.reduce((sum, r) => sum + r.eczPaid, 0))}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Total Form Fees Collected:</td>
+        <td>${formatCurrency(records.reduce((sum, r) => sum + (r.formFeePaid ? r.formFee : 0), 0))}</td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>GRAND TOTAL COLLECTED:</strong></td>
+        <td><strong>${formatCurrency(
+          records.reduce((sum, r) => sum + r.schoolPaid + r.eczPaid + (r.formFeePaid ? r.formFee : 0), 0)
+        )}</strong></td>
+      </tr>
+    </table>
+    
+    <div class="section-title">DETAILED RECORDS</div>
+  `;
+  
+  // Sort records by date (newest first)
+  const sortedRecords = [...records].sort((a, b) => b.timestamp - a.timestamp);
+  
+  sortedRecords.forEach((record, index) => {
+    const totalPaid = record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0);
+    
+    content += `
+      <div style="page-break-inside: avoid; margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 5px;">
+        <h3 style="color: var(--primary); margin-bottom: 10px;">${index + 1}. ${record.fullName}</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px;">
+          <div>
+            <p><strong>NRC:</strong> ${record.nrc}</p>
+            <p><strong>DOB:</strong> ${record.dob}</p>
+            <p><strong>Contact:</strong> ${record.contact}</p>
+            <p><strong>District:</strong> ${record.district}</p>
+          </div>
+          <div>
+            <p><strong>Subjects:</strong> ${record.numSubjects}</p>
+            <p><strong>School Fee:</strong> ${formatCurrency(record.schoolPaid)} / ${formatCurrency(record.schoolRequired)}</p>
+            <p><strong>ECZ Fee:</strong> ${formatCurrency(record.eczPaid)} / ${formatCurrency(record.eczRequired)}</p>
+            <p><strong>Form Fee:</strong> ${record.formFeePaid ? 'Paid' : 'Not Paid'}</p>
+            <p><strong>Status:</strong> ${record.status}</p>
+            <p><strong>Total Paid:</strong> ${formatCurrency(totalPaid)}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  content += `
+    <div class="footer-note">
+      <p>Report generated by: ${currentUser.name} (${currentUser.role})</p>
+      <p>Generated on: ${new Date().toLocaleString()}</p>
+      <p>System Version: 2.0 | Total Records: ${records.length}</p>
+    </div>
+  `;
+  
+  tempElement.innerHTML = content;
+  document.body.appendChild(tempElement);
+  
+  const opt = {
+    margin: 0.5,
+    filename: `All_Registration_Records_${Date.now()}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      logging: false
+    },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(tempElement).save().then(() => {
+    document.body.removeChild(tempElement);
+    hideLoading();
+    showToast('Records PDF downloaded successfully');
+    
+    // Log the action
+    logAudit('DOWNLOAD_ALL_RECORDS_PDF', `Downloaded all records PDF (${records.length} records)`);
+  }).catch(err => {
+    document.body.removeChild(tempElement);
+    hideLoading();
+    showToast('Error generating PDF: ' + err.message, 'error');
+  });
+}
+
+function printConfirmationForm(recordId) {
+  const record = records.find(r => r.id === recordId);
+  if (!record) return;
+  
+  // Create a temporary element for printing
+  const tempElement = document.createElement('div');
+  tempElement.className = 'pdf-confirmation';
+  
+  const registrationDate = new Date(record.timestamp).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  
+  tempElement.innerHTML = `
+    <div class="pdf-header">
+      <h1>KATUNDA SECONDARY SCHOOL</h1>
+      <h2>GCE REGISTRATION CONFIRMATION FORM</h2>
+      <p>Luampa District - Western Province</p>
+      <p>Registration No: KAT-GCE-${record.id.toString().slice(-6)}</p>
+      <p>Date: ${registrationDate}</p>
+    </div>
+    
+    <div class="candidate-photo-section">
+      ${record.photo ? 
+        `<img src="${record.photo}" class="candidate-photo" alt="Candidate Photo">` :
+        `<div class="photo-placeholder-pdf">
+          <i class="fas fa-user" style="font-size: 36px; color: #ccc; margin-bottom: 10px;"></i>
+          <span>Photo Not Available</span>
+        </div>`}
+      <p style="font-size: 11px; color: #666; margin-top: 5px;">Passport Photo</p>
+    </div>
+    
+    <div class="section-title">CANDIDATE INFORMATION</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">Full Name:</td>
+        <td>${record.fullName}</td>
+      </tr>
+      <tr>
+        <td class="info-label">NRC Number:</td>
+        <td>${record.nrc}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Gender:</td>
+        <td>${record.gender}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Date of Birth:</td>
+        <td>${record.dob}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Contact Number:</td>
+        <td>${record.contact}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Email Address:</td>
+        <td>${record.email || 'N/A'}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Residential Address:</td>
+        <td>${record.residentialAddress}</td>
+      </tr>
+      <tr>
+        <td class="info-label">District:</td>
+        <td>${record.district}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Province:</td>
+        <td>${record.province}</td>
+      </tr>
+    </table>
+    
+    <div class="section-title">PARENT/GUARDIAN INFORMATION</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">Name:</td>
+        <td>${record.guardianName}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Relationship:</td>
+        <td>${record.relationship}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Contact Number:</td>
+        <td>${record.guardianContact}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Address:</td>
+        <td>${record.guardianAddress}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Guardian NRC:</td>
+        <td>${record.guardianNRC || 'N/A'}</td>
+      </tr>
+    </table>
+    
+    <div class="section-title">SUBJECTS REGISTERED (${record.numSubjects} Subjects)</div>
+    <table class="info-table">
+      ${record.subjects.map((subject, index) => `
+        <tr>
+          <td class="info-label">Subject ${index + 1}:</td>
+          <td>${subject}</td>
+        </tr>
+      `).join('')}
+    </table>
+    
+    <div class="section-title">FINANCIAL DETAILS</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">School Fee Required:</td>
+        <td>${formatCurrency(record.schoolRequired)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">School Fee Paid:</td>
+        <td>${formatCurrency(record.schoolPaid)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">ECZ Fee Required:</td>
+        <td>${formatCurrency(record.eczRequired)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">ECZ Fee Paid:</td>
+        <td>${formatCurrency(record.eczPaid)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Form Fee Required:</td>
+        <td>${formatCurrency(record.formFee)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Form Fee Paid:</td>
+        <td>${record.formFeePaid ? formatCurrency(record.formFee) : 'Not Paid'}</td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>Total Required:</strong></td>
+        <td><strong>${formatCurrency(record.schoolRequired + record.eczRequired + record.formFee)}</strong></td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>Total Paid:</strong></td>
+        <td><strong>${formatCurrency(record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0))}</strong></td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>Balance Due:</strong></td>
+        <td><strong>${formatCurrency((record.schoolRequired + record.eczRequired + record.formFee) - (record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0)))}</strong></td>
+      </tr>
+      <tr style="background: ${record.status === 'Fully Paid' ? '#e8f5e9' : record.status.includes('Partial') ? '#fff3e0' : '#ffebee'}">
+        <td class="info-label"><strong>Payment Status:</strong></td>
+        <td><strong>${record.status}</strong></td>
+      </tr>
+    </table>
+    
+    <div class="section-title">DOCUMENTS SUBMITTED</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">NRC Copy:</td>
+        <td>${record.documents?.nrcCopy ? '✓ Submitted' : '✗ Not Submitted'}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Deposit Slip:</td>
+        <td>${record.documents?.depositSlip ? '✓ Submitted' : '✗ Not Submitted'}</td>
+      </tr>
+    </table>
+    
+    <div class="signature-section">
+      <p>This is to confirm that the above candidate has been registered for GCE 2025-2026 examinations.</p>
+      <div style="margin-top: 40px;">
+        <div style="float: left; width: 300px;">
+          <p>___________________________</p>
+          <p><strong>Candidate's Signature</strong></p>
+          <p>Date: ___________________</p>
+        </div>
+        <div style="float: right; width: 300px; text-align: right;">
+          <p>___________________________</p>
+          <p><strong>School Registrar</strong></p>
+          <p>Date: ___________________</p>
+        </div>
+        <div style="clear: both;"></div>
+      </div>
+    </div>
+    
+    <div class="footer-note">
+      <p>This is an official confirmation from Katunda Secondary School</p>
+      <p>For inquiries contact: 0962730221 | katundasec@edu.zm</p>
+      <p>Luampa District, Western Province</p>
+      <p style="margin-top: 10px; font-size: 10px;">Generated on: ${new Date().toLocaleString()}</p>
+    </div>
+  `;
+  
+  document.body.appendChild(tempElement);
+  
+  // Print the form
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>GCE Confirmation Form - ${record.fullName}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .pdf-header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #1a237e; padding-bottom: 20px; }
+          .pdf-header h1 { color: #1a237e; margin-bottom: 5px; font-size: 24px; }
+          .pdf-header h2 { color: #ff6f00; margin-bottom: 10px; font-size: 18px; }
+          .candidate-photo-section { float: right; margin-left: 20px; margin-bottom: 20px; text-align: center; }
+          .candidate-photo { width: 120px; height: 150px; border: 3px solid #1a237e; border-radius: 5px; object-fit: cover; }
+          .photo-placeholder-pdf { width: 120px; height: 150px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; background: #f5f5f5; color: #666; font-size: 12px; text-align: center; padding: 10px; }
+          .section-title { background: #1a237e; color: white; padding: 8px 15px; margin: 20px 0 10px 0; border-radius: 4px; font-size: 16px; }
+          .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          .info-table td { padding: 8px; border-bottom: 1px solid #eee; }
+          .info-table tr:last-child td { border-bottom: none; }
+          .info-label { font-weight: bold; color: #333; width: 40%; }
+          .signature-section { margin-top: 50px; border-top: 2px solid #1a237e; padding-top: 20px; }
+          .footer-note { text-align: center; margin-top: 30px; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 15px; }
+          @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+            @page { margin: 0.5in; }
+          }
+        </style>
+      </head>
+      <body>
+        ${tempElement.innerHTML}
+        <div class="no-print" style="text-align: center; margin-top: 20px;">
+          <button onclick="window.print()" style="padding: 10px 20px; background: #1a237e; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            <i class="fas fa-print"></i> Print Confirmation Form
+          </button>
+          <button onclick="window.close()" style="padding: 10px 20px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+            <i class="fas fa-times"></i> Close Window
+          </button>
+        </div>
+        <script>
+          window.onload = function() {
+            // Auto-print after 500ms
+            setTimeout(function() {
+              window.print();
+            }, 500);
+          };
+        <\/script>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+  
+  // Remove temporary element
+  document.body.removeChild(tempElement);
+  
+  showToast('Print dialog opened');
+}
+
+// ==================== RECEIPT GENERATION ====================
+function generateReceipt() {
+  if (!validateAndCalculate()) {
+    showToast('Please complete the form first', 'error');
+    return;
+  }
+  
+  const receiptContent = document.getElementById('receiptContent');
+  const fullName = `${document.getElementById('title').value}. ${document.getElementById('othernames').value} ${document.getElementById('surname').value}`;
+  const nrc = document.getElementById('nrc').value;
+  const date = new Date().toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
+  
+  const schoolPaid = parseFloat(document.getElementById('schoolPayment').value) || 0;
+  const eczPaid = parseFloat(document.getElementById('eczPayment').value) || 0;
+  const formFeePaid = document.getElementById('formFeeStatus').value === 'paid';
+  const formFee = settings.formFee;
+  const totalPaid = schoolPaid + eczPaid + (formFeePaid ? formFee : 0);
+  
+  // Determine payment status
+  const totalSchool = parseFloat(document.getElementById('totalSchool').value.replace('K', '').replace(',', '')) || 0;
+  const totalEcz = parseFloat(document.getElementById('totalEcz').value.replace('K', '').replace(',', '')) || 0;
+  
+  let paymentStatus = 'Pending';
+  if (formFeePaid && schoolPaid >= totalSchool && eczPaid >= totalEcz) {
+    paymentStatus = 'Fully Paid';
+  } else if (schoolPaid > 0 || eczPaid > 0 || formFeePaid) {
+    paymentStatus = 'Partial Payment';
+  } else {
+    paymentStatus = 'Query';
+  }
+  
+  receiptContent.innerHTML = `
+    <div class="receipt-container">
+      <div class="receipt-header">
+        <h2>KATUNDA SECONDARY SCHOOL</h2>
+        <p>Luampa District - Western Province</p>
+        <p><strong>OFFICIAL PAYMENT RECEIPT</strong></p>
+        <p>Receipt No: KAT-RCPT-${Date.now().toString().slice(-6)}</p>
+        <p>Date: ${date}</p>
+        <p><strong>Payment Status: ${paymentStatus}</strong></p>
+      </div>
+      
+      <div class="receipt-details">
+        <div class="receipt-row">
+          <span>Candidate Name:</span>
+          <span>${fullName}</span>
+        </div>
+        <div class="receipt-row">
+          <span>NRC Number:</span>
+          <span>${nrc}</span>
+        </div>
+        <div class="receipt-row">
+          <span>Receipt Date:</span>
+          <span>${new Date().toLocaleString()}</span>
+        </div>
+        
+        <h4 style="margin-top: 20px; color: var(--primary);">Payment Details</h4>
+        
+        <div class="receipt-row">
+          <span>School Fees Paid:</span>
+          <span>${formatCurrency(schoolPaid)}</span>
+        </div>
+        <div class="receipt-row">
+          <span>ECZ Fees Paid:</span>
+          <span>${formatCurrency(eczPaid)}</span>
+        </div>
+        <div class="receipt-row">
+          <span>Form Fees Paid:</span>
+          <span>${formFeePaid ? formatCurrency(formFee) : 'K0'}</span>
+        </div>
+        
+        <div class="receipt-total">
+          <span>TOTAL AMOUNT PAID:</span>
+          <span>${formatCurrency(totalPaid)}</span>
+        </div>
+        
+        <div class="receipt-row">
+          <span>Payment Method:</span>
+          <span>Bank Deposit</span>
+        </div>
+        <div class="receipt-row">
+          <span>Reference Number:</span>
+          <span>${document.getElementById('paymentReference').value || 'N/A'}</span>
+        </div>
+      </div>
+      
+      <div class="receipt-footer">
+        <p>This is an official receipt from Katunda Secondary School</p>
+        <p>For inquiries contact: 0962730221 | katundasec@edu.zm</p>
+        <p style="margin-top: 15px; font-style: italic;">Thank you for your payment!</p>
+        <p style="font-size: 10px; color: #999;">Generated by: ${currentUser.name} | ${new Date().toLocaleString()}</p>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('receiptDisplay').style.display = 'block';
+  showToast('Receipt generated successfully');
+}
+
+function generateReceiptForRecord(recordId) {
+  const record = records.find(r => r.id === recordId);
+  if (!record) return;
+  
+  const receiptContent = document.getElementById('receiptContent');
+  const date = new Date().toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
+  
+  const totalPaid = record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0);
+  
+  receiptContent.innerHTML = `
+    <div class="receipt-container">
+      <div class="receipt-header">
+        <h2>KATUNDA SECONDARY SCHOOL</h2>
+        <p>Luampa District - Western Province</p>
+        <p><strong>OFFICIAL PAYMENT RECEIPT</strong></p>
+        <p>Receipt No: KAT-RCPT-${record.id.toString().slice(-6)}</p>
+        <p>Date: ${date}</p>
+        <p><strong>Payment Status: ${record.status}</strong></p>
+      </div>
+      
+      <div class="receipt-details">
+        <div class="receipt-row">
+          <span>Candidate Name:</span>
+          <span>${record.fullName}</span>
+        </div>
+        <div class="receipt-row">
+          <span>NRC Number:</span>
+          <span>${record.nrc}</span>
+        </div>
+        <div class="receipt-row">
+          <span>Registration Date:</span>
+          <span>${record.date}</span>
+        </div>
+        
+        <h4 style="margin-top: 20px; color: var(--primary);">Payment Details</h4>
+        
+        <div class="receipt-row">
+          <span>School Fees Paid:</span>
+          <span>${formatCurrency(record.schoolPaid)}</span>
+        </div>
+        <div class="receipt-row">
+          <span>ECZ Fees Paid:</span>
+          <span>${formatCurrency(record.eczPaid)}</span>
+        </div>
+        <div class="receipt-row">
+          <span>Form Fees Paid:</span>
+          <span>${record.formFeePaid ? formatCurrency(record.formFee) : 'K0'}</span>
+        </div>
+        
+        <div class="receipt-total">
+          <span>TOTAL AMOUNT PAID:</span>
+          <span>${formatCurrency(totalPaid)}</span>
+        </div>
+        
+        <div class="receipt-row">
+          <span>Payment Reference:</span>
+          <span>${record.paymentReference || 'N/A'}</span>
+        </div>
+        <div class="receipt-row">
+          <span>Documents Submitted:</span>
+          <span>
+            ${record.documents?.nrcCopy ? 'NRC Copy' : ''}
+            ${record.documents?.nrcCopy && record.documents?.depositSlip ? ', ' : ''}
+            ${record.documents?.depositSlip ? 'Deposit Slip' : ''}
+            ${!record.documents?.nrcCopy && !record.documents?.depositSlip ? 'None' : ''}
+          </span>
+        </div>
+      </div>
+      
+      <div class="receipt-footer">
+        <p>This is an official receipt from Katunda Secondary School</p>
+        <p>For inquiries contact: 0962730221 | katundasec@edu.zm</p>
+        <p style="margin-top: 15px; font-style: italic;">Thank you for your payment!</p>
+        <p style="font-size: 10px; color: #999;">Generated by: ${currentUser.name} | ${new Date().toLocaleString()}</p>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('receiptDisplay').style.display = 'block';
+  showToast('Receipt generated successfully');
+}
+
+function downloadReceiptPDF() {
+  const receiptElement = document.getElementById('receiptContent');
+  if (!receiptElement || receiptElement.innerHTML.trim() === '') {
+    showToast('No receipt to download', 'error');
+    return;
+  }
+  
+  showLoading('Generating receipt PDF...');
+  
+  const opt = {
+    margin: 0.5,
+    filename: `Payment_Receipt_${Date.now()}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      logging: false
+    },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  
+  html2pdf().from(receiptElement).set(opt).save().then(() => {
+    hideLoading();
+    showToast('Receipt PDF downloaded successfully');
+    
+    // Log the action
+    logAudit('DOWNLOAD_RECEIPT_PDF', 'Downloaded receipt PDF');
+  }).catch(err => {
+    hideLoading();
+    showToast('Error generating PDF: ' + err.message, 'error');
+  });
+}
+
+function printReceipt() {
+  const receiptElement = document.getElementById('receiptContent').innerHTML;
+  
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Payment Receipt</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        ${receiptElement}
+        <div class="no-print" style="text-align: center; margin-top: 20px;">
+          <button onclick="window.print()" style="padding: 10px 20px; background: #1a237e; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            <i class="fas fa-print"></i> Print Receipt
+          </button>
+          <button onclick="window.close()" style="padding: 10px 20px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+            <i class="fas fa-times"></i> Close Window
+          </button>
+        </div>
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+            }, 500);
+          };
+        <\/script>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+
+// ==================== DATA EXPORT/IMPORT ====================
+function exportAllData() {
+  const data = {
+    registrations: records,
+    users: users,
+    settings: settings,
+    auditLogs: auditLogs,
+    exportDate: new Date().toISOString(),
+    version: '2.0',
+    exportedBy: currentUser.name
+  };
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], 
+    { type: 'application/json' });
+  saveAs(blob, `gce_backup_${Date.now()}.json`);
+  
+  // Log the action
+  logAudit('EXPORT_ALL_DATA', 'Exported all system data');
+  
+  showToast('All data exported successfully');
+}
+
+function importDataPrompt() {
+  document.getElementById('importFile').click();
+}
+
+function importData(file) {
+  if (!file) return;
+  
+  showConfirmationDialog('Import Data', 
+    'Importing data will replace current records, users, and settings. Are you sure?',
+    function(confirmed) {
+      if (confirmed) {
+        showLoading('Importing data...');
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const importedData = JSON.parse(e.target.result);
+            
+            // Validate imported data
+            if (!importedData.version || !importedData.registrations) {
+              throw new Error('Invalid data format');
+            }
+            
+            // Update all data
+            if (importedData.registrations) records = importedData.registrations;
+            if (importedData.users) users = importedData.users;
+            if (importedData.settings) settings = importedData.settings;
+            if (importedData.auditLogs) auditLogs = importedData.auditLogs;
+            
+            // Save to localStorage
+            localStorage.setItem('gceRecords', JSON.stringify(records));
+            localStorage.setItem('gceUsers', JSON.stringify(users));
+            localStorage.setItem('gceSettings', JSON.stringify(settings));
+            localStorage.setItem('auditLogs', JSON.stringify(auditLogs));
+            
+            // Update UI
+            loadRecords();
+            updateDashboardStats();
+            updateQuickStats();
+            updateStorageUsed();
+            
+            hideLoading();
+            showToast('Data imported successfully!');
+            
+            // Log the action
+            logAudit('IMPORT_DATA', `Imported data from: ${file.name}`);
+            
+          } catch (err) {
+            hideLoading();
+            showToast('Error importing data: ' + err.message, 'error');
+          }
+        };
+        
+        reader.onerror = function() {
+          hideLoading();
+          showToast('Error reading file', 'error');
+        };
+        
+        reader.readAsText(file);
+      }
+    });
+}
+
+function exportToExcel(filteredRecords = records, filename = `gce_registrations_${Date.now()}.xlsx`) {
+  if (filteredRecords.length === 0) {
+    showToast('No records to export', 'warning');
+    return;
+  }
+  
+  showLoading('Generating Excel file...');
+  
+  // Prepare data for Excel
+  const data = filteredRecords.map(record => ({
+    'ID': record.id,
+    'Full Name': record.fullName,
+    'NRC': record.nrc,
+    'Gender': record.gender,
+    'Date of Birth': record.dob,
+    'Contact': record.contact,
+    'Email': record.email || '',
+    'Province': record.province,
+    'District': record.district,
+    'Residential Address': record.residentialAddress,
+    'Guardian Name': record.guardianName,
+    'Guardian Contact': record.guardianContact,
+    'Relationship': record.relationship,
+    'Subjects Count': record.numSubjects,
+    'Subjects': record.subjects.join(', '),
+    'School Fee Required': record.schoolRequired,
+    'School Fee Paid': record.schoolPaid,
+    'ECZ Fee Required': record.eczRequired,
+    'ECZ Fee Paid': record.eczPaid,
+    'Form Fee': record.formFee,
+    'Form Fee Paid': record.formFeePaid ? 'Yes' : 'No',
+    'Total Required': record.schoolRequired + record.eczRequired + record.formFee,
+    'Total Paid': record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0),
+    'Balance': (record.schoolRequired + record.eczRequired + record.formFee) - 
+               (record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0)),
+    'Payment Status': record.status,
+    'Payment Reference': record.paymentReference || '',
+    'Documents Submitted': 
+      (record.documents?.nrcCopy ? 'NRC Copy, ' : '') + 
+      (record.documents?.depositSlip ? 'Deposit Slip' : ''),
+    'Registration Date': record.date,
+    'Created By': record.createdByName || ''
+  }));
+  
+  // Create worksheet
+  const ws = XLSX.utils.json_to_sheet(data);
+  
+  // Set column widths
+  const wscols = [
+    {wch: 10}, // ID
+    {wch: 25}, // Full Name
+    {wch: 15}, // NRC
+    {wch: 10}, // Gender
+    {wch: 12}, // DOB
+    {wch: 15}, // Contact
+    {wch: 25}, // Email
+    {wch: 15}, // Province
+    {wch: 15}, // District
+    {wch: 30}, // Residential Address
+    {wch: 25}, // Guardian Name
+    {wch: 15}, // Guardian Contact
+    {wch: 15}, // Relationship
+    {wch: 15}, // Subjects Count
+    {wch: 40}, // Subjects
+    {wch: 20}, // School Fee Required
+    {wch: 20}, // School Fee Paid
+    {wch: 20}, // ECZ Fee Required
+    {wch: 20}, // ECZ Fee Paid
+    {wch: 15}, // Form Fee
+    {wch: 15}, // Form Fee Paid
+    {wch: 20}, // Total Required
+    {wch: 20}, // Total Paid
+    {wch: 20}, // Balance
+    {wch: 20}, // Payment Status
+    {wch: 20}, // Payment Reference
+    {wch: 25}, // Documents Submitted
+    {wch: 20}, // Registration Date
+    {wch: 20}  // Created By
+  ];
+  
+  ws['!cols'] = wscols;
+  
+  // Create workbook
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Registrations');
+  
+  // Generate Excel file
+  XLSX.writeFile(wb, filename);
+  
+  hideLoading();
+  showToast(`Exported ${filteredRecords.length} records to Excel`);
+  
+  // Log the action
+  logAudit('EXPORT_EXCEL', `Exported ${filteredRecords.length} records to Excel`);
+}
+
+function exportToCSV(filteredRecords = records) {
+  if (filteredRecords.length === 0) {
+    showToast('No records to export', 'warning');
+    return;
+  }
+  
+  showLoading('Generating CSV file...');
+  
+  const headers = [
+    'ID', 'Full Name', 'NRC', 'Gender', 'DOB', 'Contact', 'Email',
+    'Province', 'District', 'Residential Address', 'Guardian Name',
+    'Guardian Contact', 'Relationship', 'Subjects Count', 'Subjects',
+    'School Fee Required', 'School Fee Paid', 'ECZ Fee Required',
+    'ECZ Fee Paid', 'Form Fee', 'Form Fee Paid', 'Total Required',
+    'Total Paid', 'Balance', 'Payment Status', 'Payment Reference',
+    'Documents Submitted', 'Registration Date', 'Created By'
+  ];
+  
+  const csvData = filteredRecords.map(record => [
+    record.id,
+    `"${record.fullName}"`,
+    record.nrc,
+    record.gender,
+    record.dob,
+    record.contact,
+    record.email || '',
+    record.province,
+    record.district,
+    `"${record.residentialAddress}"`,
+    `"${record.guardianName}"`,
+    record.guardianContact,
+    record.relationship,
+    record.numSubjects,
+    `"${record.subjects.join(', ')}"`,
+    record.schoolRequired,
+    record.schoolPaid,
+    record.eczRequired,
+    record.eczPaid,
+    record.formFee,
+    record.formFeePaid ? 'Yes' : 'No',
+    record.schoolRequired + record.eczRequired + record.formFee,
+    record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0),
+    (record.schoolRequired + record.eczRequired + record.formFee) - 
+    (record.schoolPaid + record.eczPaid + (record.formFeePaid ? record.formFee : 0)),
+    record.status,
+    record.paymentReference || '',
+    (record.documents?.nrcCopy ? 'NRC Copy, ' : '') + 
+    (record.documents?.depositSlip ? 'Deposit Slip' : ''),
+    record.date,
+    record.createdByName || ''
+  ]);
+  
+  const csvContent = [
+    headers.join(','),
+    ...csvData.map(row => row.join(','))
+  ].join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  saveAs(blob, `gce_registrations_${Date.now()}.csv`);
+  
+  hideLoading();
+  showToast(`Exported ${filteredRecords.length} records to CSV`);
+  
+  // Log the action
+  logAudit('EXPORT_CSV', `Exported ${filteredRecords.length} records to CSV`);
+}
+
+// ==================== QUICK STATS ====================
+function updateQuickStats() {
+  const today = new Date().toDateString();
+  const todayRegistrations = records.filter(r => 
+    new Date(r.timestamp).toDateString() === today
+  ).length;
+  
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  const monthlyTotal = records
+    .filter(r => {
+      const date = new Date(r.timestamp);
+      return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+    })
+    .reduce((sum, r) => sum + r.schoolPaid + r.eczPaid + (r.formFeePaid ? r.formFee : 0), 0);
+  
+  const balanceDue = records.reduce((sum, r) => {
+    const schoolBalance = Math.max(0, r.schoolRequired - r.schoolPaid);
+    const eczBalance = Math.max(0, r.eczRequired - r.eczPaid);
+    const formFeeBalance = r.formFeePaid ? 0 : r.formFee;
+    return sum + schoolBalance + eczBalance + formFeeBalance;
+  }, 0);
+  
+  const districtCount = new Set(records.map(r => r.district)).size;
+  
+  document.getElementById('todayRegistrations').textContent = todayRegistrations;
+  document.getElementById('monthlyTotal').textContent = formatCurrency(monthlyTotal);
+  document.getElementById('balanceDue').textContent = formatCurrency(balanceDue);
+  document.getElementById('districtCount').textContent = districtCount;
+}
+
+// ==================== SETTINGS MANAGEMENT ====================
+function showSettings() {
+  if (!currentUser.permissions.settings) {
+    showToast('You do not have permission to access settings', 'error');
+    return;
+  }
+  
+  loadSettingsToModal();
+  document.getElementById('settingsModal').style.display = 'flex';
+}
+
+function closeSettingsModal() {
+  document.getElementById('settingsModal').style.display = 'none';
+}
+
+function loadSettingsToModal() {
+  document.getElementById('modalUsername').value = currentUser.username;
+  document.getElementById('modalSubjectFee').value = settings.subjectFee;
+  document.getElementById('modalPracticalFee').value = settings.practicalFee;
+  document.getElementById('modalCentreFee').value = settings.centreFee;
+  document.getElementById('modalFormFee').value = settings.formFee;
+}
+
+function saveSystemSettings() {
+  const newPassword = document.getElementById('modalPassword').value;
+  const confirmPassword = document.getElementById('modalConfirmPassword').value;
+  const subjectFee = parseInt(document.getElementById('modalSubjectFee').value) || 200;
+  const practicalFee = parseInt(document.getElementById('modalPracticalFee').value) || 100;
+  const centreFee = parseInt(document.getElementById('modalCentreFee').value) || 200;
+  const formFee = parseInt(document.getElementById('modalFormFee').value) || 50;
+  
+  if (newPassword && newPassword !== confirmPassword) {
+    showToast('Passwords do not match', 'error');
+    return;
+  }
+  
+  // Update user settings
+  if (newPassword) {
+    currentUser.password = hashPassword(newPassword);
+  }
+  
+  // Update user in users array
+  const userIndex = users.findIndex(u => u.id === currentUser.id);
+  if (userIndex !== -1) {
+    users[userIndex] = currentUser;
+    localStorage.setItem('gceUsers', JSON.stringify(users));
+  }
+  
+  // Update system settings
+  settings.subjectFee = subjectFee;
+  settings.practicalFee = practicalFee;
+  settings.centreFee = centreFee;
+  settings.formFee = formFee;
+  
+  localStorage.setItem('gceSettings', JSON.stringify(settings));
+  
+  closeSettingsModal();
+  showToast('System settings saved successfully!');
+  
+  // Log the action
+  logAudit('UPDATE_SETTINGS', 'Updated system settings');
+}
+
+function resetToDefaults() {
+  showConfirmationDialog('Reset Settings', 
+    'Reset all settings to defaults? This will not affect registration data.',
+    function(confirmed) {
+      if (confirmed) {
+        settings = {
+          subjectFee: 200,
+          practicalFee: 100,
+          centreFee: 200,
+          formFee: 50
+        };
+        
+        localStorage.setItem('gceSettings', JSON.stringify(settings));
+        loadSettingsToModal();
+        showToast('Settings reset to defaults');
+        
+        // Log the action
+        logAudit('RESET_SETTINGS', 'Reset settings to defaults');
+      }
+    });
+}
+
+function clearAllData() {
+  if (currentUser.role !== 'admin') {
+    showToast('Only administrators can clear all data', 'error');
+    return;
+  }
+  
+  showConfirmationDialog('Clear All Data', 
+    'WARNING: This will delete ALL registration records, users (except current admin), and settings. This action cannot be undone. Are you absolutely sure?',
+    function(confirmed) {
+      if (confirmed) {
+        // Keep only the current admin user
+        users = [currentUser];
+        
+        // Clear all other data
+        records = [];
+        settings = {
+          subjectFee: 200,
+          practicalFee: 100,
+          centreFee: 200,
+          formFee: 50
+        };
+        auditLogs = [];
+        
+        // Save to localStorage
+        localStorage.setItem('gceRecords', JSON.stringify(records));
+        localStorage.setItem('gceUsers', JSON.stringify(users));
+        localStorage.setItem('gceSettings', JSON.stringify(settings));
+        localStorage.setItem('auditLogs', JSON.stringify(auditLogs));
+        
+        // Update UI
+        loadRecords();
+        updateDashboardStats();
+        updateQuickStats();
+        updateStorageUsed();
+        loadSettingsToModal();
+        
+        showToast('All data cleared successfully');
+        
+        // Log the action
+        logAudit('CLEAR_ALL_DATA', 'Cleared all system data');
+      }
+    });
+}
+
+// ==================== AUDIT LOGS ====================
+function showAuditLogs() {
+  const auditContent = document.getElementById('auditLogContent');
+  
+  if (auditLogs.length === 0) {
+    auditContent.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: var(--text-light);">
+        <i class="fas fa-clipboard-list" style="font-size: 48px; margin-bottom: 15px; display: block; color: var(--border);"></i>
+        No audit logs found.
+      </div>
+    `;
+  } else {
+    let content = '<div class="audit-log">';
+    auditLogs.slice(0, 100).forEach(log => { // Show only last 100 logs
+      const date = new Date(log.timestamp).toLocaleString();
+      content += `
+        <div class="audit-entry">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+            <strong>${log.action}</strong>
+            <small>${date}</small>
+          </div>
+          <div style="font-size: 11px; color: var(--text-light);">
+            <div>User: ${log.userName}</div>
+            <div>Details: ${log.details}</div>
+          </div>
+        </div>
+      `;
+    });
+    content += '</div>';
+    auditContent.innerHTML = content;
+  }
+  
+  document.getElementById('auditModal').style.display = 'flex';
+}
+
+function closeAuditModal() {
+  document.getElementById('auditModal').style.display = 'none';
+}
+
+function exportAuditLogs() {
+  const data = {
+    auditLogs: auditLogs,
+    exportDate: new Date().toISOString(),
+    exportedBy: currentUser.name
+  };
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], 
+    { type: 'application/json' });
+  saveAs(blob, `audit_logs_${Date.now()}.json`);
+  
+  showToast('Audit logs exported successfully');
+  
+  // Log the action
+  logAudit('EXPORT_AUDIT_LOGS', 'Exported audit logs');
+}
+
+function clearAuditLogs() {
+  showConfirmationDialog('Clear Audit Logs', 
+    'Clear all audit logs? This action cannot be undone.',
+    function(confirmed) {
+      if (confirmed) {
+        auditLogs = [];
+        localStorage.setItem('auditLogs', JSON.stringify(auditLogs));
+        showAuditLogs();
+        showToast('Audit logs cleared');
+        
+        // Log the action (this won't be saved since we're clearing logs)
+        console.log('Audit logs cleared by:', currentUser.name);
+      }
+    });
+}
+
+// ==================== BANK DETAILS ====================
+function showBankDetails() {
+  document.getElementById('bankModal').style.display = 'flex';
+}
+
+function closeBankModal() {
+  document.getElementById('bankModal').style.display = 'none';
+}
+
+// ==================== SMS NOTIFICATIONS ====================
+function showSMSNotifications() {
+  if (!currentUser.permissions.sms) {
+    showToast('You do not have permission to send SMS notifications', 'error');
+    return;
+  }
+  
+  document.getElementById('smsModal').style.display = 'flex';
+}
+
+function closeSMSModal() {
+  document.getElementById('smsModal').style.display = 'none';
+}
+
+// ==================== WHATSAPP MESSAGES ====================
+function showWhatsAppMessages() {
+  if (!currentUser.permissions.whatsapp) {
+    showToast('You do not have permission to send WhatsApp messages', 'error');
+    return;
+  }
+  
+  document.getElementById('whatsappModal').style.display = 'flex';
+}
+
+function closeWhatsAppModal() {
+  document.getElementById('whatsappModal').style.display = 'none';
+}
+
+// ==================== REGISTRATION SUBMISSION ====================
+function submitRegistration() {
+  if (!validateAndCalculate()) return;
+  
+  // Check permissions
+  if (!currentUser.permissions.create) {
+    showToast('You do not have permission to create records', 'error');
+    return;
+  }
+  
+  // Get selected subjects
+  const selectedSubjects = subjects
+    .filter(subject => document.getElementById(`check-${subject.id}`).checked)
+    .map(subject => subject.name);
+  
+  // Calculate fees
+  const numSubjects = selectedSubjects.length;
+  const numPracticals = selectedSubjects.filter(name => 
+    subjects.find(s => s.name === name)?.practical
+  ).length;
+  
+  const schoolPayment = parseFloat(document.getElementById('schoolPayment').value) || 0;
+  const eczPayment = parseFloat(document.getElementById('eczPayment').value) || 0;
+  const formFeePaid = document.getElementById('formFeeStatus').value === 'paid';
+  
+  const eczFee = numSubjects * settings.subjectFee;
+  const tuitionFee = numSubjects * settings.subjectFee;
+  const practicalFee = numPracticals * settings.practicalFee;
+  const centreFee = settings.centreFee;
+  const totalSchool = tuitionFee + practicalFee + centreFee;
+  const totalEcz = eczFee;
+  const formFee = settings.formFee;
+  
+  // Parse DOB
+  const dobString = document.getElementById('dob').value.trim();
+  
+  // Get document status
+  const documentStatus = getDocumentStatus();
+  
+  // Determine payment status
+  let status = 'Pending';
+  let paymentDetails = [];
+  
+  if (formFeePaid && schoolPayment >= totalSchool && eczPayment >= totalEcz) {
+    status = 'Fully Paid';
+  } else if (schoolPayment >= totalSchool && !eczPayment && !formFeePaid) {
+    status = 'Partial School';
+    paymentDetails.push('School fee paid');
+  } else if (eczPayment >= totalEcz && !schoolPayment && !formFeePaid) {
+    status = 'Partial ECZ';
+    paymentDetails.push('ECZ fee paid');
+  } else if (formFeePaid && !schoolPayment && !eczPayment) {
+    status = 'Partial Form';
+    paymentDetails.push('Form fee paid');
+  } else if (schoolPayment > 0 || eczPayment > 0 || formFeePaid) {
+    status = 'Partial Payment';
+    if (schoolPayment > 0) paymentDetails.push(`School: ${formatCurrency(schoolPayment)}`);
+    if (eczPayment > 0) paymentDetails.push(`ECZ: ${formatCurrency(eczPayment)}`);
+    if (formFeePaid) paymentDetails.push('Form: Paid');
+  } else {
+    status = 'Query';
+  }
+  
+  // Create record
+  const record = {
+    id: Date.now(),
+    photo: currentPhoto,
+    title: document.getElementById('title').value,
+    othernames: document.getElementById('othernames').value.trim(),
+    surname: document.getElementById('surname').value.trim(),
+    fullName: `${document.getElementById('title').value}. ${document.getElementById('othernames').value} ${document.getElementById('surname').value}`,
+    nrc: document.getElementById('nrc').value.trim(),
+    gender: document.getElementById('gender').value,
+    dob: dobString,
+    contact: document.getElementById('contact').value.trim(),
+    email: document.getElementById('email').value.trim() || null,
+    province: document.getElementById('province').value,
+    district: document.getElementById('district').value,
+    residentialAddress: document.getElementById('residentialAddress').value.trim(),
+    documents: documentStatus.documents,
+    guardianName: document.getElementById('guardianName').value.trim(),
+    guardianNRC: document.getElementById('guardianNRC').value.trim() || null,
+    guardianContact: document.getElementById('guardianContact').value.trim(),
+    guardianAddress: document.getElementById('guardianAddress').value.trim(),
+    relationship: document.getElementById('relationship').value,
+    subjects: selectedSubjects,
+    numSubjects: numSubjects,
+    numPracticals: numPracticals,
+    schoolRequired: totalSchool,
+    eczRequired: totalEcz,
+    formFee: formFee,
+    schoolPaid: schoolPayment,
+    eczPaid: eczPayment,
+    formFeePaid: formFeePaid,
+    paymentReference: document.getElementById('paymentReference').value.trim() || null,
+    paymentDetails: paymentDetails,
+    status: status,
+    date: new Date().toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }),
+    timestamp: Date.now(),
+    createdBy: currentUser.id,
+    createdByName: currentUser.name
+  };
+  
+  records.push(record);
+  localStorage.setItem('gceRecords', JSON.stringify(records));
+  
+  // Update UI
+  loadRecords();
+  updateDashboardStats();
+  updateQuickStats();
+  updateStorageUsed();
+  clearForm();
+  
+  showToast('Registration submitted successfully!');
+  
+  // Log the action
+  logAudit('NEW_REGISTRATION', `Registered: ${record.fullName} (NRC: ${record.nrc})`);
+  
+  // Generate confirmation PDF automatically
+  setTimeout(() => {
+    showConfirmationDialog('Generate Confirmation Form', 
+      'Registration successful! Would you like to download the confirmation form?',
+      function(confirmed) {
+        if (confirmed) {
+          generateConfirmationPDF(record.id);
+        }
+      });
+  }, 1000);
+}
+
+// ==================== FORM CLEARING ====================
+function clearForm() {
+  showConfirmationDialog('Clear Form', 'Clear all form data? Any unsaved changes will be lost.', function(confirmed) {
+    if (confirmed) {
+      // Clear all form fields
+      document.getElementById('title').value = '';
+      document.getElementById('othernames').value = '';
+      document.getElementById('surname').value = '';
+      document.getElementById('nrc').value = '';
+      document.getElementById('gender').value = '';
+      document.getElementById('dob').value = '';
+      document.getElementById('contact').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('province').value = '';
+      document.getElementById('district').value = '';
+      document.getElementById('residentialAddress').value = '';
+      document.getElementById('guardianName').value = '';
+      document.getElementById('guardianNRC').value = '';
+      document.getElementById('guardianContact').value = '';
+      document.getElementById('guardianAddress').value = '';
+      document.getElementById('relationship').value = '';
+      document.getElementById('schoolPayment').value = '';
+      document.getElementById('eczPayment').value = '';
+      document.getElementById('formFeeStatus').value = 'unpaid';
+      document.getElementById('paymentReference').value = '';
+      
+      // Clear documents
+      document.getElementById('nrcCopy').checked = false;
+      document.getElementById('depositSlip').checked = false;
+      document.querySelectorAll('.document-card').forEach(card => card.classList.remove('selected'));
+      document.querySelectorAll('.document-status span').forEach(span => {
+        span.textContent = 'Not Submitted';
+        span.className = 'status-not-submitted';
+      });
+      document.querySelectorAll('.document-status i').forEach(icon => {
+        icon.className = 'fas fa-times status-not-submitted';
+      });
+      
+      // Clear subjects
+      subjects.forEach(subject => {
+        const checkbox = document.getElementById(`check-${subject.id}`);
+        const card = document.getElementById(`subject-${subject.id}`);
+        checkbox.checked = false;
+        card.classList.remove('selected');
+      });
+      
+      // Clear photo
+      currentPhoto = null;
+      const photoPreview = document.getElementById('photoPreview');
+      photoPreview.innerHTML = `
+        <div class="photo-placeholder">
+          <i class="fas fa-user-circle"></i>
+          <span>Click to upload photo</span>
+          <span>Passport size (3.5 x 4.5 cm)</span>
+        </div>
+      `;
+      
+      // Clear receipt display
+      document.getElementById('receiptDisplay').style.display = 'none';
+      
+      // Reset fees
+      calculateFees();
+      updatePaymentStatus();
+      
+      showToast('Form cleared successfully');
+    }
+  });
+}
+
+// ==================== DEBOUNCED SEARCH ====================
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+function searchRecords() {
+  const searchTerm = document.getElementById('searchRecord').value.toLowerCase();
+  const tbody = document.getElementById('recordsTableBody');
+  const rows = tbody.getElementsByTagName('tr');
+  
+  for (let row of rows) {
+    const nameCell = row.cells[3];
+    const nrcCell = row.cells[4];
+    
+    if (nameCell && nrcCell) {
+      const name = nameCell.textContent.toLowerCase();
+      const nrc = nrcCell.textContent.toLowerCase();
+      
+      if (name.includes(searchTerm) || nrc.includes(searchTerm)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  }
+}
+
+const debouncedSearch = debounce(searchRecords, 300);
+
+function initializeDebouncedSearch() {
+  document.getElementById('searchRecord').addEventListener('input', debouncedSearch);
+}
+
+// ==================== MODAL CLOSING FUNCTIONS ====================
+function closeViewModal() {
+  document.getElementById('viewModal').style.display = 'none';
+}
+
+function closeFinancialModal() {
+  document.getElementById('financialModal').style.display = 'none';
+}
+
+// ==================== OTHER UI FUNCTIONS ====================
+function showAllRecords() {
+  document.getElementById('filterStatus').value = 'all';
+  filterRecords();
+}
+
+function showPendingPayments() {
+  document.getElementById('filterStatus').value = 'Pending';
+  filterRecords();
+}
+
+function showCompletedRegistrations() {
+  document.getElementById('filterStatus').value = 'Fully Paid';
+  filterRecords();
+}
+
+function filterRecords() {
+  const status = document.getElementById('filterStatus').value;
+  const tbody = document.getElementById('recordsTableBody');
+  const rows = tbody.getElementsByTagName('tr');
+  
+  for (let row of rows) {
+    const statusCell = row.cells[12];
+    
+    let statusMatch = true;
+    
+    if (statusCell && status !== 'all') {
+      const statusText = statusCell.textContent || statusCell.innerText;
+      if (status === 'Partial') {
+        // Match any partial status
+        if (!statusText.includes('Partial')) {
+          statusMatch = false;
+        }
+      } else if (!statusText.includes(status)) {
+        statusMatch = false;
+      }
+    }
+    
+    if (statusMatch) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  }
+}
+
+function syncData() {
+  showLoading('Syncing data...');
+  
+  // Simulate data sync
+  setTimeout(() => {
+    // Update all data from localStorage
+    const storedRecords = JSON.parse(localStorage.getItem('gceRecords')) || [];
+    const storedUsers = JSON.parse(localStorage.getItem('gceUsers')) || users;
+    const storedSettings = JSON.parse(localStorage.getItem('gceSettings')) || settings;
+    const storedAuditLogs = JSON.parse(localStorage.getItem('auditLogs')) || auditLogs;
+    
+    // Only update if data has changed
+    if (JSON.stringify(storedRecords) !== JSON.stringify(records)) {
+      records = storedRecords;
+    }
+    if (JSON.stringify(storedUsers) !== JSON.stringify(users)) {
+      users = storedUsers;
+    }
+    if (JSON.stringify(storedSettings) !== JSON.stringify(settings)) {
+      settings = storedSettings;
+    }
+    if (JSON.stringify(storedAuditLogs) !== JSON.stringify(auditLogs)) {
+      auditLogs = storedAuditLogs;
+    }
+    
+    // Update UI
+    loadRecords();
+    updateDashboardStats();
+    updateQuickStats();
+    updateStorageUsed();
+    
+    hideLoading();
+    showToast('Data synchronized successfully', 'info');
+    
+    // Log the action
+    logAudit('SYNC_DATA', 'Synchronized all data');
+  }, 1000);
+}
+
+function generatePDF() {
+  if (!validateAndCalculate()) {
+    showToast('Please complete the form first', 'error');
+    return;
+  }
+  
+  showLoading('Generating PDF form...');
+  
+  // Create a temporary element for the current form data
+  const tempElement = document.createElement('div');
+  tempElement.className = 'pdf-confirmation';
+  
+  const fullName = `${document.getElementById('title').value}. ${document.getElementById('othernames').value} ${document.getElementById('surname').value}`;
+  const nrc = document.getElementById('nrc').value;
+  const dob = document.getElementById('dob').value;
+  const contact = document.getElementById('contact').value;
+  const email = document.getElementById('email').value;
+  const province = document.getElementById('province').value;
+  const district = document.getElementById('district').value;
+  const residentialAddress = document.getElementById('residentialAddress').value;
+  const guardianName = document.getElementById('guardianName').value;
+  const guardianContact = document.getElementById('guardianContact').value;
+  const guardianAddress = document.getElementById('guardianAddress').value;
+  const relationship = document.getElementById('relationship').value;
+  
+  const selectedSubjects = subjects
+    .filter(subject => document.getElementById(`check-${subject.id}`).checked)
+    .map(subject => subject.name);
+  
+  const numSubjects = selectedSubjects.length;
+  const schoolPayment = parseFloat(document.getElementById('schoolPayment').value) || 0;
+  const eczPayment = parseFloat(document.getElementById('eczPayment').value) || 0;
+  const formFeePaid = document.getElementById('formFeeStatus').value === 'paid';
+  
+  const eczFee = numSubjects * settings.subjectFee;
+  const tuitionFee = numSubjects * settings.subjectFee;
+  const practicalFee = selectedSubjects.filter(name => 
+    subjects.find(s => s.name === name)?.practical
+  ).length * settings.practicalFee;
+  const centreFee = settings.centreFee;
+  const totalSchool = tuitionFee + practicalFee + centreFee;
+  const totalEcz = eczFee;
+  const formFee = settings.formFee;
+  const totalPaid = schoolPayment + eczPayment + (formFeePaid ? formFee : 0);
+  const totalRequired = totalSchool + totalEcz + formFee;
+  const balance = totalRequired - totalPaid;
+  
+  let status = 'Pending';
+  if (formFeePaid && schoolPayment >= totalSchool && eczPayment >= totalEcz) {
+    status = 'Fully Paid';
+  } else if (schoolPayment > 0 || eczPayment > 0 || formFeePaid) {
+    status = 'Partial Payment';
+  }
+  
+  tempElement.innerHTML = `
+    <div class="pdf-header">
+      <h1>KATUNDA SECONDARY SCHOOL</h1>
+      <h2>GCE REGISTRATION FORM (DRAFT)</h2>
+      <p>Luampa District - Western Province</p>
+      <p>Date: ${new Date().toLocaleDateString('en-GB')}</p>
+      <p style="color: #666; font-size: 12px;">DRAFT - Not Submitted</p>
+    </div>
+    
+    <div class="section-title">CANDIDATE INFORMATION</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">Full Name:</td>
+        <td>${fullName}</td>
+      </tr>
+      <tr>
+        <td class="info-label">NRC Number:</td>
+        <td>${nrc}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Date of Birth:</td>
+        <td>${dob}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Contact Number:</td>
+        <td>${contact}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Email Address:</td>
+        <td>${email || 'N/A'}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Residential Address:</td>
+        <td>${residentialAddress}</td>
+      </tr>
+      <tr>
+        <td class="info-label">District:</td>
+        <td>${district}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Province:</td>
+        <td>${province}</td>
+      </tr>
+    </table>
+    
+    <div class="section-title">PARENT/GUARDIAN INFORMATION</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">Name:</td>
+        <td>${guardianName}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Relationship:</td>
+        <td>${relationship}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Contact Number:</td>
+        <td>${guardianContact}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Address:</td>
+        <td>${guardianAddress}</td>
+      </tr>
+    </table>
+    
+    <div class="section-title">SUBJECTS SELECTED (${numSubjects} Subjects)</div>
+    <table class="info-table">
+      ${selectedSubjects.map((subject, index) => `
+        <tr>
+          <td class="info-label">Subject ${index + 1}:</td>
+          <td>${subject}</td>
+        </tr>
+      `).join('')}
+    </table>
+    
+    <div class="section-title">FEE CALCULATION</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">Number of Subjects:</td>
+        <td>${numSubjects}</td>
+      </tr>
+      <tr>
+        <td class="info-label">School Fee Required:</td>
+        <td>${formatCurrency(totalSchool)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">ECZ Fee Required:</td>
+        <td>${formatCurrency(totalEcz)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Form Fee Required:</td>
+        <td>${formatCurrency(formFee)}</td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>Total Required:</strong></td>
+        <td><strong>${formatCurrency(totalRequired)}</strong></td>
+      </tr>
+      <tr>
+        <td class="info-label">School Fee Paid:</td>
+        <td>${formatCurrency(schoolPayment)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">ECZ Fee Paid:</td>
+        <td>${formatCurrency(eczPayment)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Form Fee Paid:</td>
+        <td>${formFeePaid ? formatCurrency(formFee) : 'K0'}</td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>Total Paid:</strong></td>
+        <td><strong>${formatCurrency(totalPaid)}</strong></td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>Balance Due:</strong></td>
+        <td><strong>${formatCurrency(balance)}</strong></td>
+      </tr>
+      <tr>
+        <td class="info-label"><strong>Payment Status:</strong></td>
+        <td><strong>${status}</strong></td>
+      </tr>
+    </table>
+    
+    <div class="footer-note">
+      <p>This is a draft registration form. Submit the form to complete registration.</p>
+      <p>Generated by: ${currentUser.name} | ${new Date().toLocaleString()}</p>
+    </div>
+  `;
+  
+  document.body.appendChild(tempElement);
+  
+  const opt = {
+    margin: 0.5,
+    filename: `GCE_Registration_Draft_${fullName.replace(/[^a-z0-9]/gi, '_')}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      logging: false
+    },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(tempElement).save().then(() => {
+    document.body.removeChild(tempElement);
+    hideLoading();
+    showToast('Draft PDF downloaded successfully');
+    
+    // Log the action
+    logAudit('DOWNLOAD_DRAFT_PDF', 'Downloaded draft registration form');
+  }).catch(err => {
+    document.body.removeChild(tempElement);
+    hideLoading();
+    showToast('Error generating PDF: ' + err.message, 'error');
+  });
+}
+
+function generateDetailedFinancialReport() {
+  showLoading('Generating financial report...');
+  
+  const tempElement = document.createElement('div');
+  tempElement.className = 'pdf-confirmation';
+  
+  const totalSchoolFees = records.reduce((sum, r) => sum + r.schoolPaid, 0);
+  const totalECZFees = records.reduce((sum, r) => sum + r.eczPaid, 0);
+  const totalFormFees = records.reduce((sum, r) => sum + (r.formFeePaid ? r.formFee : 0), 0);
+  const totalCollected = totalSchoolFees + totalECZFees + totalFormFees;
+  
+  const totalSchoolRequired = records.reduce((sum, r) => sum + r.schoolRequired, 0);
+  const totalECZRequired = records.reduce((sum, r) => sum + r.eczRequired, 0);
+  const totalFormRequired = records.reduce((sum, r) => sum + r.formFee, 0);
+  const totalRequired = totalSchoolRequired + totalECZRequired + totalFormRequired;
+  
+  const balanceDue = totalRequired - totalCollected;
+  
+  // Group by status
+  const byStatus = {};
+  records.forEach(record => {
+    byStatus[record.status] = (byStatus[record.status] || 0) + 1;
+  });
+  
+  // Group by district
+  const byDistrict = {};
+  records.forEach(record => {
+    byDistrict[record.district] = (byDistrict[record.district] || 0) + 1;
+  });
+  
+  // Group by month
+  const byMonth = {};
+  records.forEach(record => {
+    const date = new Date(record.timestamp);
+    const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
+    byMonth[monthYear] = (byMonth[monthYear] || 0) + 1;
+  });
+  
+  tempElement.innerHTML = `
+    <div class="pdf-header">
+      <h1>KATUNDA SECONDARY SCHOOL</h1>
+      <h2>DETAILED FINANCIAL REPORT</h2>
+      <p>Luampa District - Western Province</p>
+      <p>Report Period: All Time</p>
+      <p>Generated: ${new Date().toLocaleDateString('en-GB')}</p>
+    </div>
+    
+    <div class="section-title">FINANCIAL SUMMARY</div>
+    <table class="info-table">
+      <tr>
+        <td class="info-label">Total Registrations:</td>
+        <td>${records.length}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Total School Fees Required:</td>
+        <td>${formatCurrency(totalSchoolRequired)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Total School Fees Collected:</td>
+        <td>${formatCurrency(totalSchoolFees)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Total ECZ Fees Required:</td>
+        <td>${formatCurrency(totalECZRequired)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Total ECZ Fees Collected:</td>
+        <td>${formatCurrency(totalECZFees)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Total Form Fees Required:</td>
+        <td>${formatCurrency(totalFormRequired)}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Total Form Fees Collected:</td>
+        <td>${formatCurrency(totalFormFees)}</td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>TOTAL REQUIRED:</strong></td>
+        <td><strong>${formatCurrency(totalRequired)}</strong></td>
+      </tr>
+      <tr style="background: #f5f5f5;">
+        <td class="info-label"><strong>TOTAL COLLECTED:</strong></td>
+        <td><strong>${formatCurrency(totalCollected)}</strong></td>
+      </tr>
+      <tr style="background: ${balanceDue > 0 ? '#fff0f0' : '#f0f9f0'};">
+        <td class="info-label"><strong>BALANCE DUE:</strong></td>
+        <td><strong>${formatCurrency(balanceDue)}</strong></td>
+      </tr>
+      <tr>
+        <td class="info-label">Collection Rate:</td>
+        <td>${totalRequired > 0 ? ((totalCollected / totalRequired) * 100).toFixed(2) : 0}%</td>
+      </tr>
+    </table>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+      <div>
+        <div class="section-title">REGISTRATIONS BY STATUS</div>
+        <table class="info-table">
+          ${Object.entries(byStatus).map(([status, count]) => `
+            <tr>
+              <td class="info-label">${status}:</td>
+              <td>${count} (${((count / records.length) * 100).toFixed(1)}%)</td>
+            </tr>
+          `).join('')}
+        </table>
+      </div>
+      
+      <div>
+        <div class="section-title">REGISTRATIONS BY DISTRICT</div>
+        <table class="info-table">
+          ${Object.entries(byDistrict).map(([district, count]) => `
+            <tr>
+              <td class="info-label">${district}:</td>
+              <td>${count} (${((count / records.length) * 100).toFixed(1)}%)</td>
+            </tr>
+          `).join('')}
+        </table>
+      </div>
+    </div>
+    
+    <div class="section-title">MONTHLY REGISTRATION TREND</div>
+    <table class="info-table">
+      ${Object.entries(byMonth).map(([month, count]) => `
+        <tr>
+          <td class="info-label">${month}:</td>
+          <td>${count} registrations</td>
+        </tr>
+      `).join('')}
+    </table>
+    
+    <div class="section-title">TOP 10 CANDIDATES BY FEES PAID</div>
+    <table class="info-table">
+      <tr>
+        <th>Name</th>
+        <th>NRC</th>
+        <th>Total Paid</th>
+        <th>Status</th>
+      </tr>
+      ${records
+        .map(r => ({
+          ...r,
+          totalPaid: r.schoolPaid + r.eczPaid + (r.formFeePaid ? r.formFee : 0)
+        }))
+        .sort((a, b) => b.totalPaid - a.totalPaid)
+        .slice(0, 10)
+        .map(record => `
+          <tr>
+            <td>${record.fullName}</td>
+            <td>${record.nrc}</td>
+            <td>${formatCurrency(record.totalPaid)}</td>
+            <td>${record.status}</td>
+          </tr>
+        `).join('')}
+    </table>
+    
+    <div class="footer-note">
+      <p>Report generated by: ${currentUser.name} (${currentUser.role})</p>
+      <p>Generated on: ${new Date().toLocaleString()}</p>
+      <p>Total Records Analyzed: ${records.length}</p>
+    </div>
+  `;
+  
+  document.body.appendChild(tempElement);
+  
+  const opt = {
+    margin: 0.5,
+    filename: `Financial_Report_${Date.now()}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      logging: false
+    },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(tempElement).save().then(() => {
+    document.body.removeChild(tempElement);
+    hideLoading();
+    showToast('Financial report downloaded successfully');
+    
+    // Log the action
+    logAudit('DOWNLOAD_FINANCIAL_REPORT', 'Downloaded detailed financial report');
+  }).catch(err => {
+    document.body.removeChild(tempElement);
+    hideLoading();
+    showToast('Error generating report: ' + err.message, 'error');
+  });
+}
+
+function generateReportPDF() {
+  generateDetailedFinancialReport();
+}
+
+function exportFinancialSummary() {
+  const summaryData = [
+    ['KATUNDA SECONDARY SCHOOL - FINANCIAL SUMMARY'],
+    ['Report Date:', new Date().toLocaleDateString('en-GB')],
+    ['Generated By:', currentUser.name],
+    [''],
+    ['SUMMARY STATISTICS', ''],
+    ['Total Registrations:', records.length],
+    ['Fully Paid:', records.filter(r => r.status === 'Fully Paid').length],
+    ['Partial Payments:', records.filter(r => r.status.includes('Partial')).length],
+    ['Pending/Query:', records.filter(r => r.status === 'Pending' || r.status === 'Query').length],
+    [''],
+    ['FINANCIAL TOTALS', ''],
+    ['Total School Fees Collected:', formatCurrency(records.reduce((sum, r) => sum + r.schoolPaid, 0))],
+    ['Total ECZ Fees Collected:', formatCurrency(records.reduce((sum, r) => sum + r.eczPaid, 0))],
+    ['Total Form Fees Collected:', formatCurrency(records.reduce((sum, r) => sum + (r.formFeePaid ? r.formFee : 0), 0))],
+    ['GRAND TOTAL COLLECTED:', formatCurrency(
+      records.reduce((sum, r) => sum + r.schoolPaid + r.eczPaid + (r.formFeePaid ? r.formFee : 0), 0)
+    )],
+    [''],
+    ['BALANCE DUE:', formatCurrency(
+      records.reduce((sum, r) => {
+        const schoolBalance = Math.max(0, r.schoolRequired - r.schoolPaid);
+        const eczBalance = Math.max(0, r.eczRequired - r.eczPaid);
+        const formFeeBalance = r.formFeePaid ? 0 : r.formFee;
+        return sum + schoolBalance + eczBalance + formFeeBalance;
+      }, 0)
+    )]
+  ];
+  
+  const ws = XLSX.utils.aoa_to_sheet(summaryData);
+  
+  // Set column widths
+  ws['!cols'] = [
+    {wch: 30},
+    {wch: 25}
+  ];
+  
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Financial Summary');
+  
+  XLSX.writeFile(wb, `Financial_Summary_${Date.now()}.xlsx`);
+  
+  showToast('Financial summary exported to Excel');
+  
+  // Log the action
+  logAudit('EXPORT_FINANCIAL_SUMMARY', 'Exported financial summary to Excel');
+}
+
+// ==================== INITIALIZATION ====================
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if user is already logged in
+  const loggedInUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (loggedInUser) {
+    currentUser = loggedInUser;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appContainer').style.display = 'block';
+    document.getElementById('currentUser').textContent = currentUser.name;
+    document.getElementById('userRoleBadge').textContent = currentUser.role.toUpperCase();
+    document.getElementById('userRoleBadge').className = `role-badge role-${currentUser.role}`;
+    setupUIForRole(currentUser.role, currentUser.permissions);
+    initializeApp();
+  }
+  
+  // Add real-time event listeners
+  document.getElementById('schoolPayment').addEventListener('input', updatePaymentStatus);
+  document.getElementById('eczPayment').addEventListener('input', updatePaymentStatus);
+  document.getElementById('formFeeStatus').addEventListener('change', updatePaymentStatus);
+  
+  // Auto-calculate on subject selection
+  subjects.forEach(subject => {
+    const checkbox = document.getElementById(`check-${subject.id}`);
+    if (checkbox) {
+      checkbox.addEventListener('change', calculateFees);
+    }
+  });
+  
+  // Auto-format inputs
+  document.getElementById('nrc').addEventListener('input', function(e) {
+    formatNRC(e.target);
+  });
+  
+  document.getElementById('dob').addEventListener('input', function(e) {
+    formatDOB(e.target);
+  });
+  
+  document.getElementById('contact').addEventListener('input', function(e) {
+    formatPhone(e.target);
+  });
+  
+  document.getElementById('guardianNRC').addEventListener('input', function(e) {
+    formatNRC(e.target);
+  });
+  
+  document.getElementById('guardianContact').addEventListener('input', function(e) {
+    formatPhone(e.target);
+  });
+  
+  // Add activity tracking for session timeout
+  document.addEventListener('mousemove', resetIdleTimer);
+  document.addEventListener('keypress', resetIdleTimer);
+  document.addEventListener('click', resetIdleTimer);
+  
+  // Start idle timer if logged in
+  if (currentUser) {
+    resetIdleTimer();
+  }
+  
+  // Add offline/online detection
+  window.addEventListener('offline', function() {
+    showToast('You are now offline. Data will be saved locally.', 'warning');
+    logAudit('OFFLINE_MODE', 'Application went offline');
+  });
+  
+  window.addEventListener('online', function() {
+    showToast('You are back online!', 'info');
+    logAudit('ONLINE_MODE', 'Application back online');
+  });
+  
+  // Close modals when clicking outside
+  document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('modal')) {
+      event.target.style.display = 'none';
+    }
+  });
+  
+  // Keyboard shortcuts
+  document.addEventListener('keydown', function(event) {
+    // Ctrl+S to save/sync
+    if (event.ctrlKey && event.key === 's') {
+      event.preventDefault();
+      if (currentUser) {
+        syncData();
+      }
+    }
+    
+    // Ctrl+F to focus search
+    if (event.ctrlKey && event.key === 'f') {
+      event.preventDefault();
+      if (currentUser) {
+        document.getElementById('searchRecord').focus();
+      }
+    }
+    
+    // Escape to close modals
+    if (event.key === 'Escape') {
+      const modals = document.querySelectorAll('.modal');
+      modals.forEach(modal => {
+        if (modal.style.display === 'flex') {
+          modal.style.display = 'none';
+        }
+      });
+    }
+  });
+});
+
+// ==================== LEGACY FUNCTIONS FOR COMPATIBILITY ====================
+function updateDistricts() {
+  // This function can be expanded to dynamically load districts based on province
+  // For now, it's kept for compatibility
+}
+
+function sendSMSNotification() {
+  showToast('SMS functionality requires server integration', 'info');
+}
+
+function sendWhatsAppMessage() {
+  showToast('WhatsApp functionality requires server integration', 'info');
+}
+</script>
+</body>
+</html>
